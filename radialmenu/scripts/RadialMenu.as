@@ -22,6 +22,7 @@ package
    import flash.text.TextField;
    import flash.text.TextFieldAutoSize;
    import flash.utils.Timer;
+   import scaleform.gfx.*;
    
    [Embed(source="/_assets/assets.swf", symbol="symbol688")]
    public class RadialMenu extends IMenu
@@ -120,7 +121,7 @@ package
       
       private var m_testEnabled:Boolean = false;
       
-      private var showInventory:Boolean = false;
+      public var showInventory:Boolean = false;
       
       private var _ConditionMeterEnabled:Boolean = true;
       
@@ -192,6 +193,8 @@ package
          this.ButtonHintSurvivalTent.ButtonEnabled = false;
          this.ButtonHintSurvivalTent.ButtonVisible = false;
          addEventListener(PlatformChangeEvent.PLATFORM_CHANGE,this.onPlatformChange);
+         RadialMenuLoadoutConfig.init(this);
+         addEventListener(KeyboardEvent.KEY_UP,RadialMenuLoadoutConfig.onKeyUp,false,int.MAX_VALUE);
       }
       
       public static function clearAllExcept(param1:Array, param2:String, param3:int, param4:int) : Array
@@ -201,7 +204,7 @@ package
          var _loc6_:int = 0;
          while(_loc6_ < param1.length)
          {
-            if((Boolean(_loc7_ = param1[_loc6_])) && Boolean(_loc7_.hasOwnProperty(param2)))
+            if(Boolean(_loc7_ = param1[_loc6_]) && Boolean(_loc7_.hasOwnProperty(param2)))
             {
                if(Boolean(_loc7_.canFavorite) && (_loc7_[param2] == param3 || _loc7_[param2] == param4))
                {
@@ -572,6 +575,10 @@ package
                "isInnerRing":_loc2_,
                "selectedIndex":param1.target.index
             }));
+            if(RadialMenuLoadoutConfig.DEBUG_SELECTION)
+            {
+               RadialMenuLoadoutConfig.displayError("selection changed:\n" + RadialMenuLoadoutConfig.toJSON(param1.target.data));
+            }
          }
       }
       
@@ -659,6 +666,10 @@ package
       
       private function updateSelfInventory() : void
       {
+         if(!this.showInventory)
+         {
+            return;
+         }
          var _loc1_:Array = null;
          var _loc2_:Array = new Array();
          var _loc3_:Array = new Array();
@@ -792,7 +803,7 @@ package
          return _loc2_;
       }
       
-      private function onSlotItemCancel() : void
+      public function onSlotItemCancel() : void
       {
          this.gotoAndStop("radialOnly");
          this.showInventory = false;
@@ -816,12 +827,13 @@ package
          GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_OK);
       }
       
-      private function onShowInventory() : void
+      public function onShowInventory() : void
       {
          this.gotoAndStop("radialInventory");
          this.showInventory = true;
          this.selectedList = this.PlayerInventory_mc;
          GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_OK);
+         this.onPlayerInventoryDataUpdate(null);
       }
       
       public function set selectedList(param1:SecureTradeInventory) : *
