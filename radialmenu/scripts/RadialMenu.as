@@ -723,6 +723,7 @@ package
       public function ProcessUserEvent(param1:String, param2:Boolean) : Boolean
       {
          var _loc3_:Boolean = false;
+         RadialMenuLoadoutConfig.ProcessUserEvent(param1,param2);
          if(this.selectedMenuIndex == DPAD_STATE_DOWN)
          {
             if(param1 == "PlaceQuickCamp")

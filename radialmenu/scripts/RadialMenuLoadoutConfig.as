@@ -3,6 +3,7 @@ package
    import Shared.AS3.Data.BSUIDataManager;
    import Shared.AS3.Data.FromClientDataEvent;
    import Shared.AS3.Events.CustomEvent;
+   import Shared.AS3.Events.PlatformChangeEvent;
    import Shared.GlobalFunc;
    import com.adobe.serialization.json.*;
    import flash.events.*;
@@ -18,7 +19,7 @@ package
       
       private static const MOD_NAME:String = "RadialMenuLoadoutManager";
       
-      private static const MOD_VERSION:String = "1.0.0";
+      private static const MOD_VERSION:String = "1.0.1";
       
       private static const FULL_MOD_NAME:String = "[" + MOD_NAME + " " + MOD_VERSION + "]";
       
@@ -29,6 +30,8 @@ package
       public static var DEBUG:Boolean = false;
       
       public static var DEBUG_SELECTION:Boolean = false;
+      
+      public static var DEBUG_EVENTS:Boolean = false;
       
       private static var config:*;
       
@@ -51,6 +54,12 @@ package
       private static var lastErrorUID:uint = 0;
       
       private static var loadouts_tf:TextField;
+      
+      private static var selectedLoadoutId:int = 0;
+      
+      private static var validLoadouts:Array = [];
+      
+      private static var errorCode:String;
        
       
       public function RadialMenuLoadoutConfig()
@@ -189,7 +198,7 @@ package
             loaderComplete = function(param1:Event):void
             {
                var json:Object;
-               var errorCode:String = "loaderComplete";
+               errorCode = "loaderComplete";
                try
                {
                   errorCode = "JSONDecoder";
@@ -232,6 +241,7 @@ package
          }
          DEBUG = data.debug;
          DEBUG_SELECTION = data.debugSelection;
+         DEBUG_EVENTS = data.debugUserEvents;
          if(data.loadouts == null)
          {
             data.loadouts = [];
@@ -264,6 +274,7 @@ package
          data.formatUnequipped = data.formatUnequipped != null && data.formatUnequipped is String ? data.formatUnequipped : "\t{key}) {name}";
          data.colorEquipped = data.colorEquipped != null && !isNaN(data.colorEquipped) ? data.colorEquipped : 5166368;
          data.colorUnequipped = data.colorUnequipped != null && !isNaN(data.colorUnequipped) ? data.colorUnequipped : 16777215;
+         data.formatGamepadButtonInfo = data.formatGamepadButtonInfo != null && data.formatGamepadButtonInfo is String ? data.formatGamepadButtonInfo : "\n Left/Right) Select loadout\n Start) Equip: {selectedLoadout}";
          config = data;
       }
       
@@ -282,11 +293,6 @@ package
             i++;
          }
          return -1;
-      }
-      
-      private static function slotItem(item:Object) : void
-      {
-         BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_SLOT_ITEM,item));
       }
       
       private static function isValidCharacterAccount(loadout:Object) : Boolean
@@ -354,6 +360,7 @@ package
             formatUnequipped.color = config.colorUnequipped;
          }
          var currentLineStartIndex:int = 0;
+         validLoadouts = [];
          i = 0;
          while(i < config.loadouts.length)
          {
@@ -385,10 +392,33 @@ package
                            "endIndex":loadouts_tf.text.length
                         });
                      }
+                     validLoadouts.push({
+                        "id":i,
+                        "name":config.loadouts[i].name
+                     });
                   }
                }
             }
             i++;
+         }
+         if(radialMenu.uiPlatform != PlatformChangeEvent.PLATFORM_PC_KB_MOUSE)
+         {
+            if(selectedLoadoutId < 0)
+            {
+               selectedLoadoutId = validLoadouts.length - 1;
+            }
+            else if(selectedLoadoutId >= validLoadouts.length)
+            {
+               selectedLoadoutId = 0;
+            }
+            if(selectedLoadoutId >= 0 && selectedLoadoutId < validLoadouts.length)
+            {
+               displayLoadout(config.formatGamepadButtonInfo.replace("{selectedLoadout}",validLoadouts[selectedLoadoutId].name));
+            }
+            else
+            {
+               displayLoadout(config.formatGamepadButtonInfo.replace("{selectedLoadout}","null"));
+            }
          }
          i = 0;
          while(i < applyFormats.length)
@@ -399,25 +429,130 @@ package
          loadouts_tf.visible = radialMenu.selectedMenuIndex == 0;
       }
       
+      private static function slotItem(item:Object) : void
+      {
+         BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_SLOT_ITEM,item));
+      }
+      
+      private static function slotLoadout(loadout:Object) : void
+      {
+         errorCode = "key detected " + loadout.hotkey;
+         var loadoutNames:Array = [];
+         var loadoutSlots:Object = {};
+         errorCode = "slots 13 " + i;
+         var slotId:int = 1;
+         while(slotId < 13)
+         {
+            var slotKey:String = String(slotId);
+            if(loadout[slotKey] != null)
+            {
+               loadoutNames.push(loadout[slotKey]);
+               loadoutSlots[loadout[slotKey]] = {"slotId":slotId - 1};
+            }
+            slotId++;
+         }
+         errorCode = "items len " + i;
+         var itemId:int = 0;
+         var itemCount:int = int(PlayerInventoryData.InventoryList.length);
+         errorCode = "find items " + i;
+         while(itemId < itemCount)
+         {
+            var item:Object = PlayerInventoryData.InventoryList[itemId];
+            if(item.filterFlag & 0x7C)
+            {
+               var foundItemId:int = indexOfCaseInsensitiveString(loadoutNames,item.text);
+               if(foundItemId != -1)
+               {
+                  errorCode = "found item " + i + " " + foundItemId;
+                  var loadoutName:String = loadoutNames[foundItemId];
+                  errorCode = "append serverHandleId " + i + " " + foundItemId;
+                  if(loadoutSlots[loadoutName] != null)
+                  {
+                     loadoutSlots[loadoutName].serverHandleId = item.serverHandleId;
+                     loadoutSlots[loadoutName].text = item.text;
+                  }
+                  errorCode = "splice " + i + " " + foundItemId;
+                  loadoutNames.splice(foundItemId,1);
+                  if(loadoutNames.length == 0)
+                  {
+                     break;
+                  }
+               }
+            }
+            itemId++;
+         }
+         errorCode = "slotting loadout";
+         var st:String = "Slotting loadout: " + loadout.name + "\n";
+         for(slot in loadoutSlots)
+         {
+            errorCode = "slotting id";
+            st += loadoutSlots[slot].slotId + 1 + " | " + (loadoutSlots[slot].text || "") + "\n";
+            if(loadoutSlots[slot].serverHandleId != null && loadoutSlots[slot].text != InnerListItems[loadoutSlots[slot].slotId].name)
+            {
+               errorCode = "slotting item " + slot;
+               slotItem(loadoutSlots[slot]);
+            }
+         }
+         if(DEBUG)
+         {
+            displayError(st);
+         }
+         setTimeout(listLoadouts,100,true);
+      }
+      
+      public static function ProcessUserEvent(param1:String, param2:Boolean) : Boolean
+      {
+         if(DEBUG_EVENTS)
+         {
+            displayError("event: " + param1 + ", " + param2 + " - platform: " + radialMenu.uiPlatform);
+         }
+         if(!param2 && config != null && config.loadouts != null)
+         {
+            if(radialMenu.uiPlatform != PlatformChangeEvent.PLATFORM_PC_KB_MOUSE)
+            {
+               if(param1 == "Map")
+               {
+                  if(DEBUG)
+                  {
+                     displayError("Gamepad: Slot loadout");
+                  }
+                  if(selectedLoadoutId < validLoadouts.length && validLoadouts[selectedLoadoutId] != null && validLoadouts[selectedLoadoutId].id < config.loadouts.length)
+                  {
+                     slotLoadout(config.loadouts[validLoadouts[selectedLoadoutId].id]);
+                  }
+               }
+               else if(param1 == "Left")
+               {
+                  if(DEBUG)
+                  {
+                     displayError("Gamepad: Prev loadout");
+                  }
+                  selectedLoadoutId--;
+                  listLoadouts(true);
+               }
+               else if(param1 == "Right")
+               {
+                  if(DEBUG)
+                  {
+                     displayError("Gamepad: Next loadout");
+                  }
+                  selectedLoadoutId++;
+                  listLoadouts(true);
+               }
+            }
+         }
+         return false;
+      }
+      
       public static function onKeyUp(event:KeyboardEvent) : void
       {
          var i:int;
          var loadout:*;
-         var loadoutNames:Array;
-         var loadoutSlots:Object;
-         var slotId:int;
-         var itemId:int;
-         var itemCount:int;
-         var foundItemId:int;
-         var loadoutName:String;
-         var st:String;
          var radialList:*;
          var radialExpandedList:*;
-         var slotKey:String;
-         var item:Object;
-         var errorCode:String = "keyUp";
          try
          {
+            errorCode = "keyUp";
             if(DEBUG)
             {
                errorCode = "DEBUG";
@@ -456,68 +591,7 @@ package
                loadout = config.loadouts[i];
                if(Boolean(loadout) && loadout.hotkey == event.keyCode && isValidCharacterAccount(loadout))
                {
-                  errorCode = "key detected " + loadout.hotkey;
-                  loadoutNames = [];
-                  loadoutSlots = {};
-                  errorCode = "slots 13 " + i;
-                  slotId = 1;
-                  while(slotId < 13)
-                  {
-                     slotKey = String(slotId);
-                     if(loadout[slotKey] != null)
-                     {
-                        loadoutNames.push(loadout[slotKey]);
-                        loadoutSlots[loadout[slotKey]] = {"slotId":slotId - 1};
-                     }
-                     slotId++;
-                  }
-                  errorCode = "items len " + i;
-                  itemId = 0;
-                  itemCount = int(PlayerInventoryData.InventoryList.length);
-                  errorCode = "find items " + i;
-                  while(itemId < itemCount)
-                  {
-                     item = PlayerInventoryData.InventoryList[itemId];
-                     if(item.filterFlag & 0x7C)
-                     {
-                        foundItemId = indexOfCaseInsensitiveString(loadoutNames,item.text);
-                        if(foundItemId != -1)
-                        {
-                           errorCode = "found item " + i + " " + foundItemId;
-                           loadoutName = loadoutNames[foundItemId];
-                           errorCode = "append serverHandleId " + i + " " + foundItemId;
-                           if(loadoutSlots[loadoutName] != null)
-                           {
-                              loadoutSlots[loadoutName].serverHandleId = item.serverHandleId;
-                              loadoutSlots[loadoutName].text = item.text;
-                           }
-                           errorCode = "splice " + i + " " + foundItemId;
-                           loadoutNames.splice(foundItemId,1);
-                           if(loadoutNames.length == 0)
-                           {
-                              break;
-                           }
-                        }
-                     }
-                     itemId++;
-                  }
-                  errorCode = "slotting loadout";
-                  st = "Slotting loadout: " + loadout.name + "\n";
-                  for(slot in loadoutSlots)
-                  {
-                     errorCode = "slotting id";
-                     st += loadoutSlots[slot].slotId + 1 + " | " + (loadoutSlots[slot].text || "") + "\n";
-                     if(loadoutSlots[slot].serverHandleId != null && loadoutSlots[slot].text != InnerListItems[loadoutSlots[slot].slotId].name)
-                     {
-                        errorCode = "slotting item " + slot;
-                        slotItem(loadoutSlots[slot]);
-                     }
-                  }
-                  if(DEBUG)
-                  {
-                     displayError(st);
-                  }
-                  setTimeout(listLoadouts,100,true);
+                  slotLoadout(loadout);
                   break;
                }
                i++;
