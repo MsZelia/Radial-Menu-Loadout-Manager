@@ -7,7 +7,7 @@ package
    import scaleform.gfx.Extensions;
    import scaleform.gfx.TextFieldEx;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol496")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol465")]
    public class SecureTradePlayerInventory extends SecureTradeInventory
    {
        
@@ -41,8 +41,14 @@ package
          this.tooltip = "";
          this.UpdateTooltipVisibility();
          Extensions.enabled = true;
-         TextFieldEx.setTextAutoSize(this.PlayerWeight_tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
-         TextFieldEx.setTextAutoSize(this.PlayerCurrency_tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
+         if(this.PlayerWeight_tf)
+         {
+            TextFieldEx.setTextAutoSize(this.PlayerWeight_tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
+         }
+         if(this.PlayerCurrency_tf)
+         {
+            TextFieldEx.setTextAutoSize(this.PlayerCurrency_tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
+         }
       }
       
       public function set currency(param1:Number) : void
@@ -64,7 +70,10 @@ package
       public function set tooltip(param1:String) : void
       {
          this.m_Tooltip = param1;
-         this.Tooltip_mc.Tooltip_tf.text = param1;
+         if(this.Tooltip_mc)
+         {
+            this.Tooltip_mc.Tooltip_tf.text = param1;
+         }
       }
       
       public function get tooltip() : String
@@ -159,16 +168,22 @@ package
       override public function redrawUIComponent() : void
       {
          super.redrawUIComponent();
-         if(this.m_CarryWeightCurrent >= this.m_AbsoluteWeightLimit)
+         if(this.PlayerWeight_tf)
          {
-            this.PlayerWeight_tf.text = "$AbsoluteWeightLimitDisplay";
-            this.PlayerWeight_tf.text = this.PlayerWeight_tf.text.replace("{weight}",this.m_CarryWeightCurrent.toString());
+            if(this.m_CarryWeightCurrent >= this.m_AbsoluteWeightLimit)
+            {
+               this.PlayerWeight_tf.text = "$AbsoluteWeightLimitDisplay";
+               this.PlayerWeight_tf.text = this.PlayerWeight_tf.text.replace("{weight}",this.m_CarryWeightCurrent.toString());
+            }
+            else
+            {
+               this.PlayerWeight_tf.text = this.m_CarryWeightCurrent + "/" + this.m_CarryWeightMax;
+            }
          }
-         else
+         if(this.PlayerCurrency_tf)
          {
-            this.PlayerWeight_tf.text = this.m_CarryWeightCurrent + "/" + this.m_CarryWeightMax;
+            this.PlayerCurrency_tf.text = this.m_Currency.toString();
          }
-         this.PlayerCurrency_tf.text = this.m_Currency.toString();
       }
       
       internal function frame1() : *

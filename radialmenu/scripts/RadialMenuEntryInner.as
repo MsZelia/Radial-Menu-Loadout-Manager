@@ -2,7 +2,7 @@ package
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol523")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol493")]
    public class RadialMenuEntryInner extends RadialMenuEntry
    {
        

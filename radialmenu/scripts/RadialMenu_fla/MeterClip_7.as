@@ -2,12 +2,12 @@ package RadialMenu_fla
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol475")]
-   public dynamic class HotkeyIcons_White_56 extends MovieClip
+   [Embed(source="/_assets/assets.swf", symbol="symbol523")]
+   public dynamic class MeterClip_7 extends MovieClip
    {
        
       
-      public function HotkeyIcons_White_56()
+      public function MeterClip_7()
       {
          super();
          addFrameScript(0,this.frame1);

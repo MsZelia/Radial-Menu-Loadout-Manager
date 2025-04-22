@@ -2,12 +2,14 @@ package RadialMenu_fla
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol532")]
-   public dynamic class T2Backer_14 extends MovieClip
+   [Embed(source="/_assets/assets.swf", symbol="symbol623")]
+   public dynamic class colorConditionMeter_6 extends MovieClip
    {
        
       
-      public function T2Backer_14()
+      public var MeterClip_mc:MovieClip;
+      
+      public function colorConditionMeter_6()
       {
          super();
          addFrameScript(0,this.frame1);

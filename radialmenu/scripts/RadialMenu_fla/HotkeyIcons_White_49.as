@@ -2,14 +2,12 @@ package RadialMenu_fla
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol655")]
-   public dynamic class colorConditionMeter_7 extends MovieClip
+   [Embed(source="/_assets/assets.swf", symbol="symbol450")]
+   public dynamic class HotkeyIcons_White_49 extends MovieClip
    {
        
       
-      public var MeterClip_mc:MovieClip;
-      
-      public function colorConditionMeter_7()
+      public function HotkeyIcons_White_49()
       {
          super();
          addFrameScript(0,this.frame1);

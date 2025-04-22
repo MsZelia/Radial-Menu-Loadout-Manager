@@ -5,7 +5,7 @@ package Shared.AS3.Styles
       
       public static var dataSubscriptionKeyword_Inspectable:String = "";
       
-      public static var itemRendererClassName_Inspectable:String = "RadialInventoryListEntry";
+      public static var itemRendererClassName_Inspectable:String = "PlayerListEntry";
       
       public static var numItems_Inspectable:uint = 13;
       

@@ -10,6 +10,7 @@ package
    import flash.text.TextField;
    import scaleform.gfx.TextFieldEx;
    
+   [Embed(source="/_assets/assets.swf", symbol="symbol299")]
    public class PlayerListEntry extends ItemListEntry
    {
       
@@ -55,52 +56,74 @@ package
          {
             this.m_ConditionInitialX = this.ConditionBar_mc.x;
          }
-         this.CurrencyIcon_mc.clipWidth = this.CurrencyIcon_mc.width * (1 / this.CurrencyIcon_mc.scaleX);
-         this.CurrencyIcon_mc.clipHeight = this.CurrencyIcon_mc.height * (1 / this.CurrencyIcon_mc.scaleY);
+         if(this.CurrencyIcon_mc)
+         {
+            this.CurrencyIcon_mc.clipWidth = this.CurrencyIcon_mc.width * (1 / this.CurrencyIcon_mc.scaleX);
+            this.CurrencyIcon_mc.clipHeight = this.CurrencyIcon_mc.height * (1 / this.CurrencyIcon_mc.scaleY);
+         }
       }
       
       override public function SetEntryText(param1:Object, param2:String) : *
       {
+         var _loc3_:* = undefined;
          super.SetEntryText(param1,param2);
-         this.RaritySelector_mc.visible = false;
-         if(this.m_LastCurrencyType != currencyType)
+         if(this.RaritySelector_mc)
          {
-            if(this.m_CurrencyIconInstance != null)
+            this.RaritySelector_mc.visible = false;
+         }
+         if(Boolean(this.CurrencyIcon_mc) && Boolean(this.Price_tf))
+         {
+            if(this.m_LastCurrencyType != currencyType)
             {
-               this.CurrencyIcon_mc.removeChild(this.m_CurrencyIconInstance);
-               this.m_CurrencyIconInstance = null;
+               if(this.m_CurrencyIconInstance != null)
+               {
+                  this.CurrencyIcon_mc.removeChild(this.m_CurrencyIconInstance);
+                  this.m_CurrencyIconInstance = null;
+               }
+               if(param1.isOffered)
+               {
+                  this.m_CurrencyIconInstance = SecureTradeShared.setCurrencyIcon(this.CurrencyIcon_mc,currencyType);
+               }
             }
-            this.m_CurrencyIconInstance = SecureTradeShared.setCurrencyIcon(this.CurrencyIcon_mc,currencyType);
+            if(param1.isOffered)
+            {
+               this.CurrencyIcon_mc.visible = true;
+               this.Price_tf.text = param1.offerValue;
+            }
+            else
+            {
+               this.CurrencyIcon_mc.visible = false;
+               this.Price_tf.text = "";
+            }
+            SetColorTransform(this.CurrencyIcon_mc,selected);
+            this.Price_tf.textColor = this.selected ? GlobalFunc.COLOR_TEXT_SELECTED : uint(ORIG_TEXT_COLOR);
          }
-         if(param1.isOffered)
-         {
-            this.CurrencyIcon_mc.visible = true;
-            this.Price_tf.text = param1.offerValue;
-         }
-         else
-         {
-            this.CurrencyIcon_mc.visible = false;
-            this.Price_tf.text = "";
-         }
-         this.Price_tf.textColor = this.selected ? GlobalFunc.COLOR_TEXT_SELECTED : uint(ORIG_TEXT_COLOR);
          if(this.RequestedTextField != null)
          {
             this.RequestedTextField.textColor = this.selected ? GlobalFunc.COLOR_TEXT_SELECTED : uint(ORIG_TEXT_COLOR);
          }
-         SetColorTransform(this.CurrencyIcon_mc,selected);
          if(selected)
          {
             textField.filters = [];
-            this.Price_tf.filters = [];
-            this.CurrencyIcon_mc.filters = [];
-            if(param1.nwRarity > -1)
+            if(this.Price_tf)
             {
-               border.visible = false;
-               this.RaritySelector_mc.visible = true;
+               this.Price_tf.filters = [];
             }
-            else
+            if(this.CurrencyIcon_mc)
             {
-               this.RaritySelector_mc.visible = false;
+               this.CurrencyIcon_mc.filters = [];
+            }
+            if(this.RaritySelector_mc)
+            {
+               if(param1.nwRarity > -1)
+               {
+                  border.visible = false;
+                  this.RaritySelector_mc.visible = true;
+               }
+               else
+               {
+                  this.RaritySelector_mc.visible = false;
+               }
             }
             if(this.RequestedTextField != null)
             {
@@ -110,8 +133,14 @@ package
          else
          {
             textField.filters = [new DropShadowFilter(2,135,0,1,1,1,1,BitmapFilterQuality.HIGH)];
-            this.Price_tf.filters = textField.filters;
-            this.CurrencyIcon_mc.filters = textField.filters;
+            if(this.Price_tf)
+            {
+               this.Price_tf.filters = textField.filters;
+            }
+            if(this.CurrencyIcon_mc)
+            {
+               this.CurrencyIcon_mc.filters = textField.filters;
+            }
             if(this.RequestedTextField != null)
             {
                this.RequestedTextField.filters = [new DropShadowFilter(2,135,0,1,1,1,1,BitmapFilterQuality.HIGH)];
@@ -139,41 +168,44 @@ package
          {
             this.UpdateConditionBar(param1);
          }
-         var _loc3_:* = new ColorTransform();
-         this.RarityBorder_mc.visible = param1.nwRarity > -1 ? true : false;
-         if(param1.nwRarity == 0)
+         if(Boolean(this.RarityBorder_mc) && Boolean(this.RaritySelector_mc) && Boolean(this.RarityIndicator_mc))
          {
-            textField.textColor = selected ? GlobalFunc.COLOR_TEXT_SELECTED : GlobalFunc.COLOR_RARITY_COMMON;
-            _loc3_.color = GlobalFunc.COLOR_RARITY_COMMON;
-            this.RarityIndicator_mc.gotoAndStop(GlobalFunc.FRAME_RARITY_COMMON);
+            _loc3_ = new ColorTransform();
+            this.RarityBorder_mc.visible = param1.nwRarity > -1 ? true : false;
+            if(param1.nwRarity == 0)
+            {
+               textField.textColor = selected ? GlobalFunc.COLOR_TEXT_SELECTED : GlobalFunc.COLOR_RARITY_COMMON;
+               _loc3_.color = GlobalFunc.COLOR_RARITY_COMMON;
+               this.RarityIndicator_mc.gotoAndStop(GlobalFunc.FRAME_RARITY_COMMON);
+            }
+            else if(param1.nwRarity == 1)
+            {
+               textField.textColor = selected ? GlobalFunc.COLOR_TEXT_SELECTED : GlobalFunc.COLOR_RARITY_RARE;
+               _loc3_.color = GlobalFunc.COLOR_RARITY_RARE;
+               this.RarityIndicator_mc.gotoAndStop(GlobalFunc.FRAME_RARITY_RARE);
+            }
+            else if(param1.nwRarity == 2)
+            {
+               textField.textColor = selected ? GlobalFunc.COLOR_TEXT_SELECTED : GlobalFunc.COLOR_RARITY_EPIC;
+               _loc3_.color = GlobalFunc.COLOR_RARITY_EPIC;
+               this.RarityIndicator_mc.gotoAndStop(GlobalFunc.FRAME_RARITY_EPIC);
+            }
+            else if(param1.nwRarity == 3)
+            {
+               textField.textColor = selected ? GlobalFunc.COLOR_TEXT_SELECTED : GlobalFunc.COLOR_RARITY_LEGENDARY;
+               _loc3_.color = GlobalFunc.COLOR_RARITY_LEGENDARY;
+               this.RarityIndicator_mc.gotoAndStop(GlobalFunc.FRAME_RARITY_LEGENDARY);
+            }
+            else
+            {
+               textField.textColor = selected ? GlobalFunc.COLOR_TEXT_SELECTED : GlobalFunc.COLOR_TEXT_BODY;
+               _loc3_.color = GlobalFunc.COLOR_TEXT_BODY;
+               this.RarityIndicator_mc.gotoAndStop(GlobalFunc.FRAME_RARITY_NONE);
+            }
+            this.RaritySelector_mc.RarityOverlay_mc.transform.colorTransform = _loc3_;
+            this.RarityBorder_mc.transform.colorTransform = _loc3_;
+            this.RarityIndicator_mc.transform.colorTransform = _loc3_;
          }
-         else if(param1.nwRarity == 1)
-         {
-            textField.textColor = selected ? GlobalFunc.COLOR_TEXT_SELECTED : GlobalFunc.COLOR_RARITY_RARE;
-            _loc3_.color = GlobalFunc.COLOR_RARITY_RARE;
-            this.RarityIndicator_mc.gotoAndStop(GlobalFunc.FRAME_RARITY_RARE);
-         }
-         else if(param1.nwRarity == 2)
-         {
-            textField.textColor = selected ? GlobalFunc.COLOR_TEXT_SELECTED : GlobalFunc.COLOR_RARITY_EPIC;
-            _loc3_.color = GlobalFunc.COLOR_RARITY_EPIC;
-            this.RarityIndicator_mc.gotoAndStop(GlobalFunc.FRAME_RARITY_EPIC);
-         }
-         else if(param1.nwRarity == 3)
-         {
-            textField.textColor = selected ? GlobalFunc.COLOR_TEXT_SELECTED : GlobalFunc.COLOR_RARITY_LEGENDARY;
-            _loc3_.color = GlobalFunc.COLOR_RARITY_LEGENDARY;
-            this.RarityIndicator_mc.gotoAndStop(GlobalFunc.FRAME_RARITY_LEGENDARY);
-         }
-         else
-         {
-            textField.textColor = selected ? GlobalFunc.COLOR_TEXT_SELECTED : GlobalFunc.COLOR_TEXT_BODY;
-            _loc3_.color = GlobalFunc.COLOR_TEXT_BODY;
-            this.RarityIndicator_mc.gotoAndStop(GlobalFunc.FRAME_RARITY_NONE);
-         }
-         this.RaritySelector_mc.RarityOverlay_mc.transform.colorTransform = _loc3_;
-         this.RarityBorder_mc.transform.colorTransform = _loc3_;
-         this.RarityIndicator_mc.transform.colorTransform = _loc3_;
       }
       
       private function UpdateConditionBar(param1:Object) : *

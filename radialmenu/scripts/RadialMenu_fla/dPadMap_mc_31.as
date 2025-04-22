@@ -1,16 +1,19 @@
 package RadialMenu_fla
 {
    import flash.display.MovieClip;
+   import flash.text.TextField;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol302")]
-   public dynamic class RarityIndicator_33 extends MovieClip
+   [Embed(source="/_assets/assets.swf", symbol="symbol640")]
+   public dynamic class dPadMap_mc_31 extends MovieClip
    {
        
       
-      public function RarityIndicator_33()
+      public var labelUp_tf:TextField;
+      
+      public function dPadMap_mc_31()
       {
          super();
-         addFrameScript(0,this.frame1,1,this.frame2,2,this.frame3,3,this.frame4,4,this.frame5);
+         addFrameScript(0,this.frame1,1,this.frame2,2,this.frame3,3,this.frame4);
       }
       
       internal function frame1() : *
@@ -29,11 +32,6 @@ package RadialMenu_fla
       }
       
       internal function frame4() : *
-      {
-         stop();
-      }
-      
-      internal function frame5() : *
       {
          stop();
       }

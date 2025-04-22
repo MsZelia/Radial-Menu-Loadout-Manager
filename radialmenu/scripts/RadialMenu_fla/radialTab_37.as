@@ -3,8 +3,8 @@ package RadialMenu_fla
    import flash.display.MovieClip;
    import flash.text.TextField;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol687")]
-   public dynamic class radialTab_41 extends MovieClip
+   [Embed(source="/_assets/assets.swf", symbol="symbol655")]
+   public dynamic class radialTab_37 extends MovieClip
    {
        
       
@@ -12,7 +12,7 @@ package RadialMenu_fla
       
       public var tabText_tf:TextField;
       
-      public function radialTab_41()
+      public function radialTab_37()
       {
          super();
          addFrameScript(0,this.frame1,1,this.frame2,2,this.frame3);

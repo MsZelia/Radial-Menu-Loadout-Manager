@@ -2,12 +2,12 @@ package RadialMenu_fla
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol555")]
-   public dynamic class MeterClip_8 extends MovieClip
+   [Embed(source="/_assets/assets.swf", symbol="symbol502")]
+   public dynamic class T2Backer_13 extends MovieClip
    {
        
       
-      public function MeterClip_8()
+      public function T2Backer_13()
       {
          super();
          addFrameScript(0,this.frame1);

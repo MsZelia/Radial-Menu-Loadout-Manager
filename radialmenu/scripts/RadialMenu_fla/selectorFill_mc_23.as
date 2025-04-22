@@ -2,12 +2,12 @@ package RadialMenu_fla
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol504")]
-   public dynamic class selectorFill_mc_24 extends MovieClip
+   [Embed(source="/_assets/assets.swf", symbol="symbol473")]
+   public dynamic class selectorFill_mc_23 extends MovieClip
    {
        
       
-      public function selectorFill_mc_24()
+      public function selectorFill_mc_23()
       {
          super();
          addFrameScript(0,this.frame1,99,this.frame100);

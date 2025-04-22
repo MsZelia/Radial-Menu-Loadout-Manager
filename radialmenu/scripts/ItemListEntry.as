@@ -86,8 +86,14 @@ package
             "clip":this.SetBonusIcon_mc,
             "visible":param1.isSetItem
          });
-         this.questItemIcon_mc.gotoAndStop(!!param1.isSharedQuestItem ? "shared" : "local");
-         this.SetBonusIcon_mc.gotoAndStop(Boolean(param1.isSetBonusActive) && param1.equipState != 0 ? "active" : "inactive");
+         if(this.questItemIcon_mc)
+         {
+            this.questItemIcon_mc.gotoAndStop(!!param1.isSharedQuestItem ? "shared" : "local");
+         }
+         if(this.SetBonusIcon_mc)
+         {
+            this.SetBonusIcon_mc.gotoAndStop(Boolean(param1.isSetBonusActive) && param1.equipState != 0 ? "active" : "inactive");
+         }
          var _loc7_:* = this.textField.getLineMetrics(0).width + this.textField.x;
          var _loc8_:* = 10;
          var _loc10_:* = 0;

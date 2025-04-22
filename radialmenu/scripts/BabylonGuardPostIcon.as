@@ -2,7 +2,7 @@ package
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol338")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol313")]
    public dynamic class BabylonGuardPostIcon extends MovieClip
    {
        

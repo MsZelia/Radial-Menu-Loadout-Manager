@@ -2,7 +2,7 @@ package
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol478")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol453")]
    public class RadialActiveEffectEntry extends MovieClip
    {
        

@@ -27,8 +27,11 @@ package
          super();
          addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
          TextFieldEx.setTextAutoSize(this.Header_mc.Header_tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
-         this.CurrencyIcon_mc.clipWidth = this.CurrencyIcon_mc.width * (1 / this.CurrencyIcon_mc.scaleX);
-         this.CurrencyIcon_mc.clipHeight = this.CurrencyIcon_mc.height * (1 / this.CurrencyIcon_mc.scaleY);
+         if(this.CurrencyIcon_mc)
+         {
+            this.CurrencyIcon_mc.clipWidth = this.CurrencyIcon_mc.width * (1 / this.CurrencyIcon_mc.scaleX);
+            this.CurrencyIcon_mc.clipHeight = this.CurrencyIcon_mc.height * (1 / this.CurrencyIcon_mc.scaleY);
+         }
       }
       
       public function set header(param1:String) : void
@@ -62,7 +65,7 @@ package
       {
          var _loc1_:SecureTrade = this.parent as SecureTrade;
          var _loc2_:uint = SecureTradeShared.CURRENCY_CAPS;
-         if(_loc1_)
+         if(Boolean(_loc1_) && Boolean(this.CurrencyIcon_mc))
          {
             _loc2_ = _loc1_.currencyType;
             if(this.m_CurrencyIconInstance != null)
