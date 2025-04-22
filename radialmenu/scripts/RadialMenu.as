@@ -18,13 +18,12 @@ package
    import flash.events.FocusEvent;
    import flash.events.KeyboardEvent;
    import flash.events.TimerEvent;
-   import flash.geom.ColorTransform;
    import flash.text.TextField;
    import flash.text.TextFieldAutoSize;
    import flash.utils.Timer;
    import scaleform.gfx.*;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol688")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol657")]
    public class RadialMenu extends IMenu
    {
       
@@ -43,6 +42,8 @@ package
       public static var DPAD_STATE_RIGHT:int = 3;
       
       private static var TEST_MODE:Boolean = false;
+      
+      private static const FILTER_NEW_FAVE:* = 3;
       
       private static const FILTER_WEAPONS:* = 1 << 2;
       
@@ -71,8 +72,6 @@ package
       
       public var BladeFill_mc:MovieClip;
       
-      public var ActiveEffects_mc:RadialActiveEffects;
-      
       public var PlayerInventory_mc:SecureTradePlayerInventory;
       
       private var m_SelectedList:SecureTradeInventory;
@@ -92,8 +91,6 @@ package
       protected var ButtonHintNavigate:BSButtonHintData;
       
       protected var ButtonHintSay:BSButtonHintData;
-      
-      protected var ButtonHintDrop:BSButtonHintData;
       
       protected var ButtonHintExpand:BSButtonHintData;
       
@@ -131,8 +128,6 @@ package
       
       private var m_QuickCampPlaceCost:uint = 0;
       
-      private var m_ItemLevelColor:*;
-      
       private var m_ThumbstickSpamTimer:Timer;
       
       private var m_ThumbstickSpamDisable:Boolean = false;
@@ -147,12 +142,10 @@ package
          this.ButtonHintMouseScrollNavigate = new BSButtonHintData("$SCROLL","Mousewheel","","",1,null);
          this.ButtonHintNavigate = new BSButtonHintData("$SELECT","Space","PSN_RS","Xenon_RS",1,null);
          this.ButtonHintSay = new BSButtonHintData("$SAY","Space","PSN_A","Xenon_A",1,null);
-         this.ButtonHintDrop = new BSButtonHintData("$DROP","R","PSN_X","Xenon_X",1,null);
          this.ButtonHintExpand = new BSButtonHintData("$EXPAND","Q","PSN_R1","Xenon_R1",1,null);
          this.ButtonHintSurvivalTent = new BSButtonHintData("$SURVIVALTENTZEUS","T","PSN_Y","Xenon_Y",1,this.onPlaceQuickCamp);
          this.ButtonHintSlotItem = new BSButtonHintData("$CHANGE","C","PSN_R1","Xenon_R1",1,this.onSlotItem);
          this.ButtonHintInspectItem = new BSButtonHintData("$INSPECT","X","PSN_R3","Xenon_R3",1,null);
-         this.m_ItemLevelColor = new ColorTransform();
          this.m_ThumbstickSpamTimer = new Timer(125,-1);
          this.testStateData = {
             "innerSelectedIndex":-1,
@@ -170,6 +163,7 @@ package
          this.CenterInfo_mc.visible = false;
          this.DpadMap_mc.visible = false;
          this.DpadLine_mc.visible = false;
+         this.PlayerInventory_mc.enabled = false;
          this.SelectedImage_mc.clipScale = 1.7;
          this.SelectedImage_mc.clipAlpha = 1;
          this.SelectedImage_mc.centerClip = true;
@@ -197,25 +191,6 @@ package
          addEventListener(KeyboardEvent.KEY_UP,RadialMenuLoadoutConfig.onKeyUp,false,int.MAX_VALUE);
       }
       
-      public static function clearAllExcept(param1:Array, param2:String, param3:int, param4:int) : Array
-      {
-         var _loc7_:Object = null;
-         var _loc5_:Array = [];
-         var _loc6_:int = 0;
-         while(_loc6_ < param1.length)
-         {
-            if(Boolean(_loc7_ = param1[_loc6_]) && Boolean(_loc7_.hasOwnProperty(param2)))
-            {
-               if(Boolean(_loc7_.canFavorite) && (_loc7_[param2] == param3 || _loc7_[param2] == param4))
-               {
-                  _loc5_.push(_loc7_);
-               }
-            }
-            _loc6_++;
-         }
-         return _loc5_;
-      }
-      
       private function populateButtonBar() : void
       {
          var _loc1_:Vector.<BSButtonHintData> = new Vector.<BSButtonHintData>();
@@ -223,7 +198,6 @@ package
          _loc1_.push(this.ButtonHintMouseScrollNavigate);
          _loc1_.push(this.ButtonHintNavigate);
          _loc1_.push(this.ButtonHintSay);
-         _loc1_.push(this.ButtonHintDrop);
          _loc1_.push(this.ButtonHintSlotItem);
          _loc1_.push(this.ButtonHintInspectItem);
          _loc1_.push(this.ButtonHintExpand);
@@ -238,17 +212,10 @@ package
          this.OuterRing.keyboardType = uiKeyboard;
       }
       
-      override public function SetNuclearWinterMode(param1:Boolean) : *
-      {
-         super.SetNuclearWinterMode(param1);
-         this.ActiveEffects_mc.visible = bNuclearWinterMode;
-         this.updateButtonBar();
-      }
-      
       private function updateButtonBar() : void
       {
          var _loc1_:Boolean = false;
-         this.ButtonHintSurvivalTent.ButtonVisible = this.selectedMenuIndex == DPAD_STATE_UP && !this.showInventory && !bNuclearWinterMode;
+         this.ButtonHintSurvivalTent.ButtonVisible = this.selectedMenuIndex == DPAD_STATE_UP && !this.showInventory;
          this.ButtonHintSurvivalTent.ButtonEnabled = true;
          if(this.m_QuickCampPlaceCost > 0)
          {
@@ -262,7 +229,6 @@ package
          {
             _loc1_ = !!this.InnerRing.selectedEntry ? Boolean(this.InnerRing.selectedEntry.data.expandable) : false;
             this.ButtonHintSay.ButtonText = "$SAY";
-            this.ButtonHintDrop.ButtonVisible = false;
             this.ButtonHintExpand.ButtonVisible = true;
             this.ButtonHintExpand.ButtonEnabled = _loc1_;
             this.ButtonHintSlotItem.ButtonVisible = false;
@@ -279,7 +245,6 @@ package
          else if(this.selectedMenuIndex == DPAD_STATE_UP)
          {
             this.ButtonHintSay.ButtonText = "$RADIAL_MENU_USE";
-            this.ButtonHintDrop.ButtonVisible = bNuclearWinterMode;
             this.ButtonHintExpand.ButtonVisible = false;
             this.ButtonHintSlotItem.ButtonVisible = !this.showInventory;
             this.ButtonHintInspectItem.ButtonVisible = !this.showInventory;
@@ -303,7 +268,6 @@ package
             case DPAD_STATE_LEFT:
                _loc2_ = "left";
                this.radialTab.tabText_tf.text = "$EMOTES_PET";
-               this.ButtonHintDrop.ButtonVisible = false;
                this.ButtonHintInspectItem.ButtonVisible = false;
                break;
             case DPAD_STATE_RIGHT:
@@ -397,7 +361,7 @@ package
             {
                this.CenterInfo_mc.ammoInfo_mc.ammoInfo_tf.text = "";
             }
-            this.CenterInfo_mc.ConditionBar_mc.visible = param1.maximumHealth > 0 && this._ConditionMeterEnabled && !bNuclearWinterMode;
+            this.CenterInfo_mc.ConditionBar_mc.visible = param1.maximumHealth > 0 && this._ConditionMeterEnabled;
             GlobalFunc.updateConditionMeter(this.CenterInfo_mc.ConditionBar_mc.Bar_mc,param1.currentHealth,param1.maximumHealth,param1.durability);
             if(this.selectedMenuIndex != DPAD_STATE_LEFT)
             {
@@ -405,27 +369,6 @@ package
             }
             this.CenterInfo_mc.IconContainer_mc.transform.colorTransform = null;
             this.CenterInfo_mc.emoteTitleText_tf.textColor = GlobalFunc.COLOR_TEXT_HEADER;
-            this.CenterInfo_mc.RarityColor_mc.visible = param1.nwRarity > -1;
-            if(param1.nwRarity > -1)
-            {
-               if(param1.nwRarity == 0)
-               {
-                  this.m_ItemLevelColor.color = GlobalFunc.COLOR_RARITY_COMMON;
-               }
-               else if(param1.nwRarity == 1)
-               {
-                  this.m_ItemLevelColor.color = GlobalFunc.COLOR_RARITY_RARE;
-               }
-               else if(param1.nwRarity == 2)
-               {
-                  this.m_ItemLevelColor.color = GlobalFunc.COLOR_RARITY_EPIC;
-               }
-               else if(param1.nwRarity == 3)
-               {
-                  this.m_ItemLevelColor.color = GlobalFunc.COLOR_RARITY_LEGENDARY;
-               }
-               this.CenterInfo_mc.RarityColor_mc.transform.colorTransform = this.m_ItemLevelColor;
-            }
          }
          else
          {
@@ -656,43 +599,112 @@ package
          }
       }
       
-      private function SortListDataAlphabetically(param1:Array) : void
+      private function ClearAndSortListData(param1:Array) : Array
       {
-         if(param1 != null)
+         var index:int = 0;
+         var item:Object = null;
+         var aListData:Array = param1;
+         var newArray:Array = [];
+         if(aListData != null)
          {
-            param1.sortOn("text");
+            index = 0;
+            while(index < aListData.length)
+            {
+               item = aListData[index];
+               if(Boolean(item.canFavorite) && (item.filterFlag == FILTER_WEAPONS || item.filterFlag == FILTER_NEW_FAVE || item.filterFlag == FILTER_ARMOR || item.filterFlag == FILTER_APPAREL || item.filterFlag == FILTER_AID || item.filterFlag == FILTER_FOODWATER))
+               {
+                  newArray.push(item);
+               }
+               index++;
+            }
+            newArray.sort(function(param1:Object, param2:Object):int
+            {
+               var _loc3_:int = 0;
+               var _loc4_:int = 10;
+               if(param1.filterFlag == FILTER_WEAPONS || param1.filterFlag == FILTER_NEW_FAVE)
+               {
+                  _loc4_ = 1;
+               }
+               else if(param1.filterFlag == FILTER_ARMOR || param1.filterFlag == FILTER_APPAREL)
+               {
+                  _loc4_ = 2;
+               }
+               if(param1.filterFlag == FILTER_FOODWATER || param1.filterFlag == FILTER_AID)
+               {
+                  _loc4_ = 3;
+               }
+               var _loc5_:int = 10;
+               if(param2.filterFlag == FILTER_WEAPONS || param2.filterFlag == FILTER_NEW_FAVE)
+               {
+                  _loc5_ = 1;
+               }
+               else if(param2.filterFlag == FILTER_ARMOR || param2.filterFlag == FILTER_APPAREL)
+               {
+                  _loc5_ = 2;
+               }
+               if(param2.filterFlag == FILTER_FOODWATER || param2.filterFlag == FILTER_AID)
+               {
+                  _loc5_ = 3;
+               }
+               if(_loc4_ < _loc5_)
+               {
+                  _loc3_ = -1;
+               }
+               else if(_loc4_ > _loc5_)
+               {
+                  _loc3_ = 1;
+               }
+               if(_loc3_ == 0)
+               {
+                  if(param1.text < param2.text)
+                  {
+                     _loc3_ = -1;
+                  }
+                  else if(param1.text > param2.text)
+                  {
+                     _loc3_ = 1;
+                  }
+                  else if(param1.count < param2.count)
+                  {
+                     _loc3_ = -1;
+                  }
+                  else if(param1.count > param2.count)
+                  {
+                     _loc3_ = 1;
+                  }
+               }
+               return _loc3_;
+            });
          }
+         return newArray;
       }
       
       private function updateSelfInventory() : void
       {
-         if(!this.showInventory)
-         {
-            return;
-         }
          var _loc1_:Array = null;
-         var _loc2_:Array = new Array();
-         var _loc3_:Array = new Array();
-         var _loc4_:Array = new Array();
-         var _loc5_:Object = null;
-         var _loc6_:int = 0;
-         this.PlayerInventory_mc.ItemList_mc.List_mc.filterer.itemFilter = FILTER_WEAPONS + FILTER_ARMOR + FILTER_APPAREL + FILTER_AID + FILTER_FOODWATER;
-         if((_loc5_ = BSUIDataManager.GetDataFromClient("PlayerInventoryData").data) != null && _loc5_.InventoryList != null)
+         var _loc2_:Array = null;
+         var _loc3_:Array = null;
+         var _loc4_:Object = null;
+         var _loc5_:int = 0;
+         if(this.PlayerInventory_mc.enabled)
          {
-            _loc2_ = _loc5_.InventoryList.concat();
-            _loc2_ = clearAllExcept(_loc2_,"filterFlag",FILTER_WEAPONS,3);
-            this.SortListDataAlphabetically(_loc2_);
-            _loc4_ = _loc5_.InventoryList.concat();
-            _loc4_ = clearAllExcept(_loc4_,"filterFlag",FILTER_ARMOR,FILTER_APPAREL);
-            this.SortListDataAlphabetically(_loc4_);
-            _loc3_ = _loc5_.InventoryList.concat();
-            _loc3_ = clearAllExcept(_loc3_,"filterFlag",FILTER_FOODWATER,FILTER_AID);
-            this.SortListDataAlphabetically(_loc3_);
+            _loc1_ = new Array();
+            _loc2_ = new Array();
+            _loc3_ = new Array();
+            _loc4_ = null;
+            _loc5_ = 0;
+            if((_loc4_ = BSUIDataManager.GetDataFromClient("PlayerInventoryData").data) != null && _loc4_.InventoryList != null)
+            {
+               this.PlayerInventory_mc.ItemList_mc.List_mc.filterer.itemFilter = FILTER_WEAPONS + FILTER_ARMOR + FILTER_APPAREL + FILTER_AID + FILTER_FOODWATER;
+               this.PlayerInventory_mc.ItemList_mc.List_mc.MenuListData = this.ClearAndSortListData(_loc4_.InventoryList.concat());
+            }
+            else
+            {
+               this.PlayerInventory_mc.ItemList_mc.List_mc.MenuListData = null;
+            }
+            this.PlayerInventory_mc.ItemList_mc.SetIsDirty();
+            this.onSelectionChange(null);
          }
-         _loc1_ = _loc2_.concat(_loc4_.concat(_loc3_));
-         this.PlayerInventory_mc.ItemList_mc.List_mc.MenuListData = _loc1_;
-         this.PlayerInventory_mc.ItemList_mc.SetIsDirty();
-         this.onSelectionChange(null);
       }
       
       private function IsInventoryEmpty(param1:MovieClip) : Boolean
@@ -808,6 +820,7 @@ package
       {
          this.gotoAndStop("radialOnly");
          this.showInventory = false;
+         this.PlayerInventory_mc.enabled = true;
          GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_CANCEL);
       }
       
@@ -819,6 +832,7 @@ package
          }));
          this.gotoAndStop("radialOnly");
          this.showInventory = false;
+         this.PlayerInventory_mc.enabled = true;
          GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_OK);
       }
       
@@ -830,11 +844,12 @@ package
       
       public function onShowInventory() : void
       {
+         this.PlayerInventory_mc.enabled = true;
+         this.updateSelfInventory();
          this.gotoAndStop("radialInventory");
          this.showInventory = true;
          this.selectedList = this.PlayerInventory_mc;
          GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_OK);
-         this.onPlayerInventoryDataUpdate(null);
       }
       
       public function set selectedList(param1:SecureTradeInventory) : *
