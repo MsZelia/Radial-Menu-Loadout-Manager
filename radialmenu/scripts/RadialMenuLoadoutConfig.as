@@ -258,6 +258,16 @@ package
                   data.loadouts[i].name = data.loadouts[i].name == null ? "Loadout " + i : data.loadouts[i].name;
                   data.loadouts[i].account = data.loadouts[i].account == null ? [] : [].concat(data.loadouts[i].account);
                   data.loadouts[i].character = data.loadouts[i].character == null ? [] : [].concat(data.loadouts[i].character);
+                  var slotId:int = 1;
+                  while(slotId < 13)
+                  {
+                     var slotKey:String = String(slotId);
+                     if(data.loadouts[i][slotKey] != null)
+                     {
+                        data.loadouts[i][slotKey] = [].concat(data.loadouts[i][slotKey]);
+                     }
+                     slotId++;
+                  }
                }
                i++;
             }
@@ -318,12 +328,26 @@ package
          var i:int = 0;
          while(i < 12)
          {
+            errorCode = "isEQ " + i;
             var slotKey:String = String(i + 1);
             if(loadout[slotKey] != null)
             {
-               var searchFor:String = loadout[slotKey].toLowerCase();
-               var lowercaseName:String = InnerListItems[i].name.toLowerCase();
-               if(lowercaseName.indexOf(searchFor) == -1)
+               errorCode = "isEQ " + i + " not null";
+               var foundInSlot:Boolean = loadout[slotKey].length == 0;
+               var j:int = 0;
+               errorCode = "isEQ " + i + " loop";
+               while(j < loadout[slotKey].length)
+               {
+                  var searchFor:String = loadout[slotKey][j].toLowerCase();
+                  var lowercaseName:String = InnerListItems[i].name.toLowerCase();
+                  if(lowercaseName.indexOf(searchFor) != -1)
+                  {
+                     foundInSlot = true;
+                     break;
+                  }
+                  j++;
+               }
+               if(!foundInSlot)
                {
                   isEquipped = false;
                   break;
@@ -336,97 +360,117 @@ package
       
       public static function listLoadouts(force:Boolean = false) : void
       {
-         if(initialized && !force)
+         var applyFormats:Array;
+         var formatEquipped:*;
+         var formatUnequipped:*;
+         var currentLineStartIndex:int;
+         try
          {
-            return;
-         }
-         if(config == null || AccountName == "" || CharacterName == "" || InnerListItems == null || InnerListItems.length == 0)
-         {
-            return;
-         }
-         loadouts_tf.text = "";
-         initialized = true;
-         var applyFormats:Array = [];
-         var formatEquipped:* = null;
-         if(config.colorEquipped != null && !isNaN(config.colorEquipped))
-         {
-            formatEquipped = new TextFormat();
-            formatEquipped.color = config.colorEquipped;
-         }
-         var formatUnequipped:* = null;
-         if(config.colorUnequipped != null && !isNaN(config.colorUnequipped))
-         {
-            formatUnequipped = new TextFormat();
-            formatUnequipped.color = config.colorUnequipped;
-         }
-         var currentLineStartIndex:int = 0;
-         validLoadouts = [];
-         i = 0;
-         while(i < config.loadouts.length)
-         {
-            currentLineStartIndex = int(loadouts_tf.text.length);
-            if(config.loadouts[i] != null)
+            if(initialized && !force)
             {
-               if(isValidCharacterAccount(config.loadouts[i]))
+               return;
+            }
+            if(config == null || AccountName == "" || CharacterName == "" || InnerListItems == null || InnerListItems.length == 0)
+            {
+               return;
+            }
+            errorCode = "init";
+            loadouts_tf.text = "";
+            initialized = true;
+            applyFormats = [];
+            formatEquipped = null;
+            errorCode = "color formats";
+            if(config.colorEquipped != null && !isNaN(config.colorEquipped))
+            {
+               formatEquipped = new TextFormat();
+               formatEquipped.color = config.colorEquipped;
+            }
+            formatUnequipped = null;
+            if(config.colorUnequipped != null && !isNaN(config.colorUnequipped))
+            {
+               formatUnequipped = new TextFormat();
+               formatUnequipped.color = config.colorUnequipped;
+            }
+            errorCode = "apply formats";
+            currentLineStartIndex = 0;
+            validLoadouts = [];
+            i = 0;
+            while(i < config.loadouts.length)
+            {
+               currentLineStartIndex = int(loadouts_tf.text.length);
+               if(config.loadouts[i] != null)
                {
-                  if(isEquippedLoadout(config.loadouts[i]))
+                  errorCode = "isValidCharacterAccount";
+                  if(isValidCharacterAccount(config.loadouts[i]))
                   {
-                     displayLoadout(" " + config.formatEquipped.replace("{name}",config.loadouts[i].name).replace("{key}",getButtonKey(config.loadouts[i].hotkey)));
-                     if(formatEquipped != null)
+                     errorCode = "isEquippedLoadout";
+                     if(isEquippedLoadout(config.loadouts[i]))
                      {
-                        applyFormats.push({
-                           "format":formatEquipped,
-                           "startIndex":currentLineStartIndex + 1,
-                           "endIndex":loadouts_tf.text.length
+                        errorCode = "display loadout EQ";
+                        displayLoadout(" " + config.formatEquipped.replace("{name}",config.loadouts[i].name).replace("{key}",getButtonKey(config.loadouts[i].hotkey)));
+                        if(formatEquipped != null)
+                        {
+                           applyFormats.push({
+                              "format":formatEquipped,
+                              "startIndex":currentLineStartIndex + 1,
+                              "endIndex":loadouts_tf.text.length
+                           });
+                        }
+                     }
+                     else
+                     {
+                        errorCode = "display loadout notEQ";
+                        displayLoadout(" " + config.formatUnequipped.replace("{name}",config.loadouts[i].name).replace("{key}",getButtonKey(config.loadouts[i].hotkey)));
+                        if(formatUnequipped != null)
+                        {
+                           applyFormats.push({
+                              "format":formatUnequipped,
+                              "startIndex":currentLineStartIndex + 1,
+                              "endIndex":loadouts_tf.text.length
+                           });
+                        }
+                        validLoadouts.push({
+                           "id":i,
+                           "name":config.loadouts[i].name
                         });
                      }
-                  }
-                  else
-                  {
-                     displayLoadout(" " + config.formatUnequipped.replace("{name}",config.loadouts[i].name).replace("{key}",getButtonKey(config.loadouts[i].hotkey)));
-                     if(formatUnequipped != null)
-                     {
-                        applyFormats.push({
-                           "format":formatUnequipped,
-                           "startIndex":currentLineStartIndex + 1,
-                           "endIndex":loadouts_tf.text.length
-                        });
-                     }
-                     validLoadouts.push({
-                        "id":i,
-                        "name":config.loadouts[i].name
-                     });
                   }
                }
+               i++;
             }
-            i++;
+            errorCode = "controller keybinds";
+            if(radialMenu.uiPlatform != PlatformChangeEvent.PLATFORM_PC_KB_MOUSE)
+            {
+               if(selectedLoadoutId < 0)
+               {
+                  selectedLoadoutId = validLoadouts.length - 1;
+               }
+               else if(selectedLoadoutId >= validLoadouts.length)
+               {
+                  selectedLoadoutId = 0;
+               }
+               if(selectedLoadoutId >= 0 && selectedLoadoutId < validLoadouts.length)
+               {
+                  displayLoadout(config.formatGamepadButtonInfo.replace("{selectedLoadout}",validLoadouts[selectedLoadoutId].name));
+               }
+               else
+               {
+                  displayLoadout(config.formatGamepadButtonInfo.replace("{selectedLoadout}","null"));
+               }
+            }
+            errorCode = "apply formats";
+            i = 0;
+            while(i < applyFormats.length)
+            {
+               loadouts_tf.setTextFormat(applyFormats[i].format,applyFormats[i].startIndex,applyFormats[i].endIndex);
+               i++;
+            }
+            loadouts_tf.visible = radialMenu.selectedMenuIndex == 0;
          }
-         if(radialMenu.uiPlatform != PlatformChangeEvent.PLATFORM_PC_KB_MOUSE)
+         catch(e:*)
          {
-            if(selectedLoadoutId < 0)
-            {
-               selectedLoadoutId = validLoadouts.length - 1;
-            }
-            else if(selectedLoadoutId >= validLoadouts.length)
-            {
-               selectedLoadoutId = 0;
-            }
-            if(selectedLoadoutId >= 0 && selectedLoadoutId < validLoadouts.length)
-            {
-               displayLoadout(config.formatGamepadButtonInfo.replace("{selectedLoadout}",validLoadouts[selectedLoadoutId].name));
-            }
-            else
-            {
-               displayLoadout(config.formatGamepadButtonInfo.replace("{selectedLoadout}","null"));
-            }
+            displayError("Error listLoadouts: " + errorCode + " : " + e);
          }
-         i = 0;
-         while(i < applyFormats.length)
-         {
-            loadouts_tf.setTextFormat(applyFormats[i].format,applyFormats[i].startIndex,applyFormats[i].endIndex);
-            i++;
-         }
-         loadouts_tf.visible = radialMenu.selectedMenuIndex == 0;
       }
       
       private static function slotItem(item:Object) : void
@@ -437,49 +481,41 @@ package
       private static function slotLoadout(loadout:Object) : void
       {
          errorCode = "key detected " + loadout.hotkey;
-         var loadoutNames:Array = [];
          var loadoutSlots:Object = {};
-         errorCode = "slots 13 " + i;
-         var slotId:int = 1;
-         while(slotId < 13)
+         errorCode = "find matches";
+         var matches:Array = findMatches(loadout,PlayerInventoryData.InventoryList);
+         errorCode = "append slotIds";
+         var slotId:int = 0;
+         while(slotId < 12)
          {
-            var slotKey:String = String(slotId);
-            if(loadout[slotKey] != null)
+            var slotKey:String = String(slotId + 1);
+            errorCode = "loadout " + slotId;
+            if(loadout[slotKey] != null && loadout[slotKey].length > 0)
             {
-               loadoutNames.push(loadout[slotKey]);
-               loadoutSlots[loadout[slotKey]] = {"slotId":slotId - 1};
-            }
-            slotId++;
-         }
-         errorCode = "items len " + i;
-         var itemId:int = 0;
-         var itemCount:int = int(PlayerInventoryData.InventoryList.length);
-         errorCode = "find items " + i;
-         while(itemId < itemCount)
-         {
-            var item:Object = PlayerInventoryData.InventoryList[itemId];
-            if(item.filterFlag & 0x7C)
-            {
-               var foundItemId:int = indexOfCaseInsensitiveString(loadoutNames,item.text);
-               if(foundItemId != -1)
+               errorCode = "matches " + slotId;
+               if(matches != null && matches[slotId].length > 0)
                {
-                  errorCode = "found item " + i + " " + foundItemId;
-                  var loadoutName:String = loadoutNames[foundItemId];
-                  errorCode = "append serverHandleId " + i + " " + foundItemId;
-                  if(loadoutSlots[loadoutName] != null)
+                  errorCode = "indexItemNames " + slotId;
+                  var indexItemNames:int = 0;
+                  while(indexItemNames < matches[slotId].length)
                   {
-                     loadoutSlots[loadoutName].serverHandleId = item.serverHandleId;
-                     loadoutSlots[loadoutName].text = item.text;
-                  }
-                  errorCode = "splice " + i + " " + foundItemId;
-                  loadoutNames.splice(foundItemId,1);
-                  if(loadoutNames.length == 0)
-                  {
-                     break;
+                     errorCode = "match " + slotId;
+                     if(matches[slotId][indexItemNames].length > 0)
+                     {
+                        errorCode = "found match " + slotId + " " + indexItemNames;
+                        var match:Object = matches[slotId][indexItemNames][0];
+                        loadoutSlots[match.text] = {
+                           "slotId":slotId,
+                           "serverHandleId":match.serverHandleId,
+                           "text":match.text
+                        };
+                        break;
+                     }
+                     indexItemNames++;
                   }
                }
             }
-            itemId++;
+            slotId++;
          }
          errorCode = "slotting loadout";
          var st:String = "Slotting loadout: " + loadout.name + "\n";
@@ -601,6 +637,59 @@ package
          {
             displayError("Error: " + errorCode + " : " + e);
          }
+      }
+      
+      private static function findMatches(loadout:Object, items:Array) : Array
+      {
+         var matches:Array = new Array(12);
+         var loadoutNames:Array = new Array(12);
+         var j:int = 0;
+         var i:int = 0;
+         while(i < 12)
+         {
+            var slotKey:String = String(i + 1);
+            if(loadout[slotKey] != null)
+            {
+               loadoutNames[i] = loadout[slotKey];
+               matches[i] = new Array(loadoutNames[i].length);
+               j = 0;
+               while(j < loadoutNames[i].length)
+               {
+                  matches[i][j] = new Array();
+                  j++;
+               }
+            }
+            else
+            {
+               matches[i] = new Array();
+               loadoutNames[i] = new Array();
+            }
+            i++;
+         }
+         i = 0;
+         while(i < items.length)
+         {
+            var item:Object = items[i];
+            if(item.filterFlag & 0x7C)
+            {
+               var itemName:String = item.text.toLowerCase();
+               j = 0;
+               while(j < 12)
+               {
+                  var foundItemId:int = indexOfCaseInsensitiveString(loadoutNames[j],itemName);
+                  if(foundItemId != -1)
+                  {
+                     matches[j][foundItemId].push({
+                        "serverHandleId":item.serverHandleId,
+                        "text":item.text
+                     });
+                  }
+                  j++;
+               }
+            }
+            i++;
+         }
+         return matches;
       }
       
       public static function getButtonKey(keyCode:uint) : String
