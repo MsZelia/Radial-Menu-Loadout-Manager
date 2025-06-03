@@ -23,7 +23,7 @@ package
    import flash.utils.Timer;
    import scaleform.gfx.*;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol657")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol656")]
    public class RadialMenu extends IMenu
    {
       
@@ -827,7 +827,7 @@ package
       private function onSlotItem() : void
       {
          BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_SLOT_ITEM,{
-            "serverHandleId":this.selectedListEntry.serverHandleId,
+            "serverHandleID":this.selectedListEntry.serverHandleID,
             "slotId":this.InnerRing.selectedIndex
          }));
          this.gotoAndStop("radialOnly");

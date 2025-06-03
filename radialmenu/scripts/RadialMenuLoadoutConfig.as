@@ -506,7 +506,7 @@ package
                         var match:Object = matches[slotId][indexItemNames][0];
                         loadoutSlots[match.text] = {
                            "slotId":slotId,
-                           "serverHandleId":match.serverHandleId,
+                           "serverHandleID":match.serverHandleID,
                            "text":match.text
                         };
                         break;
@@ -523,7 +523,7 @@ package
          {
             errorCode = "slotting id";
             st += loadoutSlots[slot].slotId + 1 + " | " + (loadoutSlots[slot].text || "") + "\n";
-            if(loadoutSlots[slot].serverHandleId != null && loadoutSlots[slot].text != InnerListItems[loadoutSlots[slot].slotId].name)
+            if(loadoutSlots[slot].serverHandleID != null && loadoutSlots[slot].text != InnerListItems[loadoutSlots[slot].slotId].name)
             {
                errorCode = "slotting item " + slot;
                slotItem(loadoutSlots[slot]);
@@ -680,7 +680,7 @@ package
                   if(foundItemId != -1)
                   {
                      matches[j][foundItemId].push({
-                        "serverHandleId":item.serverHandleId,
+                        "serverHandleID":item.serverHandleID,
                         "text":item.text
                      });
                   }
