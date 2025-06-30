@@ -307,6 +307,23 @@ package
          return -1;
       }
       
+      private static function indexOfCaseInsensitiveStartingString(arr:Array, searchingFor:String, fromIndex:uint = 0) : int
+      {
+         var lowercaseSearchString:String = searchingFor.toLowerCase();
+         var len:uint = arr.length;
+         var i:uint = fromIndex;
+         while(i < len)
+         {
+            var element:* = arr[i];
+            if(element is String && lowercaseSearchString.indexOf(element.toLowerCase()) == 0)
+            {
+               return i;
+            }
+            i++;
+         }
+         return -1;
+      }
+      
       private static function indexOfCaseSensitiveString(arr:Array, searchingFor:String, fromIndex:uint = 0) : int
       {
          var len:uint = arr.length;
@@ -719,8 +736,8 @@ package
                         }
                         break;
                      case "STARTS":
-                        foundItemId = indexOfCaseInsensitiveString(loadoutNames[j],itemName);
-                        if(foundItemId == 0)
+                        foundItemId = indexOfCaseInsensitiveStartingString(loadoutNames[j],itemName);
+                        if(foundItemId != -1)
                         {
                            matches[j][foundItemId].push({
                               "serverHandleID":item.serverHandleID,
