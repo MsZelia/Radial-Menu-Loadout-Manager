@@ -19,7 +19,7 @@ package
       
       private static const MOD_NAME:String = "RadialMenuLoadoutManager";
       
-      private static const MOD_VERSION:String = "1.0.3";
+      private static const MOD_VERSION:String = "1.0.4";
       
       private static const FULL_MOD_NAME:String = "[" + MOD_NAME + " " + MOD_VERSION + "]";
       
@@ -254,10 +254,12 @@ package
                var loadout:Object = data.loadouts[i];
                if(loadout != null)
                {
+                  data.loadouts[i].enabled = data.loadouts[i].enabled != null ? Boolean(data.loadouts[i].enabled) : true;
                   data.loadouts[i].hotkey = data.loadouts[i].hotkey != null && !isNaN(data.loadouts[i].hotkey) ? Number(data.loadouts[i].hotkey) : 0;
                   data.loadouts[i].name = data.loadouts[i].name == null ? "Loadout " + i : data.loadouts[i].name;
                   data.loadouts[i].account = data.loadouts[i].account == null ? [] : [].concat(data.loadouts[i].account);
                   data.loadouts[i].character = data.loadouts[i].character == null ? [] : [].concat(data.loadouts[i].character);
+                  data.loadouts[i].matchMode = data.loadouts[i].matchMode == null ? "CONTAINS" : data.loadouts[i].matchMode.toUpperCase();
                   var slotId:int = 1;
                   while(slotId < 13)
                   {
@@ -297,6 +299,22 @@ package
          {
             var element:* = arr[i];
             if(element is String && lowercaseSearchString.indexOf(element.toLowerCase()) != -1)
+            {
+               return i;
+            }
+            i++;
+         }
+         return -1;
+      }
+      
+      private static function indexOfCaseSensitiveString(arr:Array, searchingFor:String, fromIndex:uint = 0) : int
+      {
+         var len:uint = arr.length;
+         var i:uint = fromIndex;
+         while(i < len)
+         {
+            var element:* = arr[i];
+            if(element is String && searchingFor.indexOf(element) != -1)
             {
                return i;
             }
@@ -398,7 +416,7 @@ package
             while(i < config.loadouts.length)
             {
                currentLineStartIndex = int(loadouts_tf.text.length);
-               if(config.loadouts[i] != null)
+               if(config.loadouts[i] != null && config.loadouts[i].enabled)
                {
                   errorCode = "isValidCharacterAccount";
                   if(isValidCharacterAccount(config.loadouts[i]))
@@ -625,7 +643,7 @@ package
             {
                errorCode = "loadout " + i;
                loadout = config.loadouts[i];
-               if(Boolean(loadout) && loadout.hotkey == event.keyCode && isValidCharacterAccount(loadout))
+               if(Boolean(loadout) && loadout.enabled && loadout.hotkey == event.keyCode && isValidCharacterAccount(loadout))
                {
                   slotLoadout(loadout);
                   break;
@@ -666,23 +684,50 @@ package
             }
             i++;
          }
+         var matchMode:String = loadout.matchMode;
          i = 0;
          while(i < items.length)
          {
             var item:Object = items[i];
             if(item.filterFlag & 0x7C)
             {
-               var itemName:String = item.text.toLowerCase();
+               var itemName:String = item.text;
                j = 0;
                while(j < 12)
                {
-                  var foundItemId:int = indexOfCaseInsensitiveString(loadoutNames[j],itemName);
-                  if(foundItemId != -1)
+                  var foundItemId:int = -1;
+                  switch(matchMode)
                   {
-                     matches[j][foundItemId].push({
-                        "serverHandleID":item.serverHandleID,
-                        "text":item.text
-                     });
+                     case "EXACT":
+                        foundItemId = indexOfCaseSensitiveString(loadoutNames[j],itemName);
+                        if(foundItemId != -1)
+                        {
+                           matches[j][foundItemId].push({
+                              "serverHandleID":item.serverHandleID,
+                              "text":item.text
+                           });
+                        }
+                        break;
+                     case "CONTAINS":
+                        foundItemId = indexOfCaseInsensitiveString(loadoutNames[j],itemName);
+                        if(foundItemId != -1)
+                        {
+                           matches[j][foundItemId].push({
+                              "serverHandleID":item.serverHandleID,
+                              "text":item.text
+                           });
+                        }
+                        break;
+                     case "STARTS":
+                        foundItemId = indexOfCaseInsensitiveString(loadoutNames[j],itemName);
+                        if(foundItemId == 0)
+                        {
+                           matches[j][foundItemId].push({
+                              "serverHandleID":item.serverHandleID,
+                              "text":item.text
+                           });
+                        }
+                        break;
                   }
                   j++;
                }
