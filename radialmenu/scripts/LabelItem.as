@@ -10,19 +10,11 @@ package
       
       private static const DEFAULT_MAX_TEXT_WIDTH:* = 130;
       
-      private static const CORPSE_LOOT_MAX_TEXT_WIDTH:* = 260;
-      
       private static const DEFAULT_MAX_TEXT_HEIGHT:* = 28;
-      
-      private static const CORPSE_LOOT_MAX_TEXT_HEIGHT:* = 20;
       
       private static const DEFAULT_LABEL_BUFFER_X:Number = 8.35;
       
-      private static const CORPSE_LOOT_LABEL_BUFFER_X:Number = 5;
-      
       private static const DEFAULT_LABEL_OFFSET_Y:Number = 4;
-      
-      private static const CORPSE_LOOT_LABEL_OFFSET_Y:Number = 8;
        
       
       private var DisplayText:String;
@@ -39,28 +31,23 @@ package
       
       protected var StringWidth:Number = 0;
       
-      private var m_CorpseLootMode:Boolean = false;
-      
       private var m_ForceUppercase:Boolean = true;
       
-      public function LabelItem(param1:String, param2:uint, param3:Boolean, param4:Boolean = false)
+      public function LabelItem(param1:String, param2:uint, param3:Boolean)
       {
          super();
          this.m_ForceUppercase = param3;
          this.AssociatedID = param2;
          this.DisplayText = GlobalFunc.LocalizeFormattedString(param1);
          this.DisplayText = this.m_ForceUppercase ? this.DisplayText.toUpperCase() : this.DisplayText;
-         this.m_CorpseLootMode = param4;
          TextFieldEx.setTextAutoSize(this.Label_tf,"shrink");
          GlobalFunc.SetText(this.Label_tf,this.DisplayText);
-         var _loc5_:Number = this.m_CorpseLootMode ? CORPSE_LOOT_MAX_TEXT_WIDTH : DEFAULT_MAX_TEXT_WIDTH;
-         var _loc6_:Number = this.m_CorpseLootMode ? CORPSE_LOOT_MAX_TEXT_HEIGHT : DEFAULT_MAX_TEXT_HEIGHT;
-         if(this.textWidth > _loc5_)
+         if(this.textWidth > DEFAULT_MAX_TEXT_WIDTH)
          {
-            this.Label_tf.width = _loc5_;
-            if(this.textHeight > _loc6_)
+            this.Label_tf.width = DEFAULT_MAX_TEXT_WIDTH;
+            if(this.textHeight > DEFAULT_MAX_TEXT_HEIGHT)
             {
-               this.Label_tf.y -= this.m_CorpseLootMode ? CORPSE_LOOT_LABEL_OFFSET_Y : DEFAULT_LABEL_OFFSET_Y;
+               this.Label_tf.y -= DEFAULT_LABEL_OFFSET_Y;
             }
             GlobalFunc.SetText(this.Label_tf,this.DisplayText);
          }
@@ -128,8 +115,7 @@ package
       
       public function get maxWidth() : *
       {
-         var _loc1_:Number = this.m_CorpseLootMode ? 2 * CORPSE_LOOT_LABEL_BUFFER_X : 2 * DEFAULT_LABEL_BUFFER_X;
-         return this.StringWidth + _loc1_;
+         return this.StringWidth + 2 * DEFAULT_LABEL_BUFFER_X;
       }
       
       private function colorUpdate() : *

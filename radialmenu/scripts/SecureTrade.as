@@ -87,6 +87,8 @@ package
       
       public static const EVENT_TRANSFER_ITEM:String = "Container::TransferItem";
       
+      public static const EVENT_TRANSFER_BULK_ITEM:String = "Container::TransferBulkItem";
+      
       public static const EVENT_TAKE_ALL:String = "Container::TakeAll";
       
       public static const EVENT_INSPECT_ITEM:String = "Container::InspectItem";
@@ -272,8 +274,6 @@ package
       
       private const DEFAULT_CATEGORY_BAR_SCALE:* = 1.35;
       
-      private const CORPSE_LOOT_CATEGORY_BAR_SCALE:* = 1.15;
-      
       private const ITEM_CARD_START_HEIGHT:Number = 82;
       
       private const ITEM_CARD_START_Y:Number = 338.8;
@@ -368,8 +368,6 @@ package
       
       private var m_OtherInvData:Array;
       
-      private var m_ContainerIDs:Array;
-      
       private var m_NewItems:Array;
       
       private var m_ShowOffersOnly:Boolean = false;
@@ -442,7 +440,6 @@ package
          this.m_TheirOffersData = new Array();
          this.m_PlayerInvData = new Array();
          this.m_OtherInvData = new Array();
-         this.m_ContainerIDs = new Array();
          this.m_NewItems = new Array();
          super();
          this.ButtonHintBar_mc.useVaultTecColor = true;
@@ -634,7 +631,7 @@ package
             {
                this.m_OnNewTab = this.m_HasNewTab && this.m_SelectedTab == 0;
                this.updateHeaders();
-               this.PlayerInventory_mc.ItemList_mc.List_mc.filterer.itemFilter = this.m_CorpseLootMode ? FILTER_ALL : int(this.m_ItemFilters[this.m_SelectedTab].flag);
+               this.PlayerInventory_mc.ItemList_mc.List_mc.filterer.itemFilter = this.m_ItemFilters[this.m_SelectedTab].flag;
                this.OfferInventory_mc.ItemList_mc.List_mc.filterer.itemFilter = this.m_ItemFilters[this.m_SelectedTab].flag;
                this.updateSelfInventory();
                this.OfferInventory_mc.ItemList_mc.SetIsDirty();
@@ -851,11 +848,6 @@ package
                   GlobalFunc.SetText(this.OfferInventory_mc.Header_mc.Header_tf,this.OfferInventory_mc.Header_mc.Header_tf.text.replace("{1}",this.m_DefaultHeaderText),true);
                }
             }
-         }
-         else if(this.m_CorpseLootMode)
-         {
-            this.PlayerInventory_mc.header = "$MYINVENTORY";
-            this.OfferInventory_mc.header = this.m_SelectedTab == 0 ? "$ALLCORPSES" : this.m_ItemFilters[this.m_SelectedTab].text.toUpperCase();
          }
          else if(this.m_SelectedTab == 0 && !this.m_IsFilteredCategory || this.m_HasNewTab && this.m_SelectedTab == 1)
          {
@@ -1398,8 +1390,11 @@ package
             this.PopulateCampVendingInventory();
          }
          this.OfferInventory_mc.currency = _loc2_.currencyAmount;
-         this.OfferInventory_mc.carryWeightCurrent = _loc2_.currWeight;
-         this.OfferInventory_mc.carryWeightMax = _loc2_.maxWeight;
+         if(!this.m_CorpseLootMode)
+         {
+            this.OfferInventory_mc.carryWeightCurrent = _loc2_.currWeight;
+            this.OfferInventory_mc.carryWeightMax = _loc2_.maxWeight;
+         }
          this.updateHeaders();
          if(!this.modalActive)
          {
@@ -1446,15 +1441,11 @@ package
          if(Boolean(param1.data.CorpseInventories) && param1.data.CorpseInventories.length > 0)
          {
             this.m_CorpseLootMode = true;
-            this.CategoryBar_mc.CorpseLootMode = true;
-            this.CategoryBar_mc.labelWidthScale = this.CORPSE_LOOT_CATEGORY_BAR_SCALE;
             this.updateCorpseInventoryLists(param1.data.CorpseInventories);
          }
          else
          {
             this.m_CorpseLootMode = false;
-            this.CategoryBar_mc.CorpseLootMode = false;
-            this.CategoryBar_mc.labelWidthScale = this.DEFAULT_CATEGORY_BAR_SCALE;
             this.m_OtherInvData = param1.data.InventoryList.concat();
             this.updateOtherInventory();
          }
@@ -1491,49 +1482,31 @@ package
       
       private function updateCorpseInventoryLists(param1:Object) : void
       {
-         this.m_HasNewTab = false;
-         this.m_ContainerIDs.splice(0);
-         this.m_ItemFilters.splice(0);
-         this.CategoryBar_mc.Clear();
+         var _loc7_:uint = 0;
+         var _loc8_:Object = null;
          this.m_OtherInvData.splice(0);
-         this.CategoryBar_mc.AddLabel("$ALLCORPSES",0,true);
-         this.m_ItemFilters.push({
-            "text":"$ALLCORPSES",
-            "flag":FILTER_ALL
-         });
-         var _loc2_:Array = param1.concat().sort(this.sortCorpsesByDistance);
-         var _loc3_:uint = 0;
+         this.m_DefaultHeaderText = "$NEARBYCORPSES";
+         var _loc2_:Number = 0;
+         var _loc3_:Array = param1.concat();
          var _loc4_:* = 0;
-         while(_loc4_ < _loc2_.length)
+         while(_loc4_ < _loc3_.length)
          {
-            this.m_ContainerIDs.push(_loc2_[_loc4_].containerID);
-            this.m_OtherInvData = this.m_OtherInvData.concat(_loc2_[_loc4_].inventory);
-            this.m_ItemFilters.push({
-               "text":_loc2_[_loc4_].name,
-               "flag":_loc2_[_loc4_].inventoryCategory
-            });
-            _loc3_++;
-            this.CategoryBar_mc.AddLabel(_loc2_[_loc4_].name.toUpperCase(),_loc3_,true);
+            _loc7_ = 0;
+            while(_loc7_ < _loc3_[_loc4_].inventory.length)
+            {
+               _loc8_ = _loc3_[_loc4_].inventory[_loc7_];
+               _loc2_ += _loc8_.count * _loc8_.weight;
+               _loc7_++;
+            }
+            this.m_OtherInvData = this.m_OtherInvData.concat(_loc3_[_loc4_].inventory);
             _loc4_++;
          }
+         this.OfferInventory_mc.carryWeightCurrent = Math.floor(_loc2_);
          var _loc5_:int = this.OfferInventory_mc.ItemList_mc.List_mc.selectedIndex;
-         this.m_TabMax = this.m_ItemFilters.length;
-         var _loc6_:uint = uint(_loc2_.length + 1);
-         this.CategoryBar_mc.maxVisible = GlobalFunc.Clamp(_loc6_,1,5);
-         this.CategoryBar_mc.Finalize();
-         this.CategoryBar_mc.SetSelection(GlobalFunc.Clamp(this.selectedTab,0,this.m_ItemFilters.length - 1),true,false);
-         this.m_SelectedTabForceChange = true;
-         this.selectedTab = GlobalFunc.Clamp(this.m_SelectedTab,0,this.m_ItemFilters.length - 1);
+         this.updateCategoryBar();
          this.PopulateOfferInventory(this.m_OtherInvData);
-         var _loc7_:int = int(this.OfferInventory_mc.ItemList_mc.List_mc.filterer.filterArray.length);
-         if(_loc5_ < _loc7_)
-         {
-            this.OfferInventory_mc.ItemList_mc.List_mc.selectedIndex = _loc5_;
-         }
-         else
-         {
-            this.OfferInventory_mc.ItemList_mc.List_mc.selectedIndex = _loc7_ - 1;
-         }
+         var _loc6_:int = int(this.OfferInventory_mc.ItemList_mc.List_mc.filterer.filterArray.length);
+         this.OfferInventory_mc.ItemList_mc.List_mc.selectedIndex = _loc5_ < _loc6_ ? _loc5_ : _loc6_ - 1;
       }
       
       private function onMyOffersDataUpdate(param1:FromClientDataEvent) : void
@@ -1578,40 +1551,18 @@ package
          }
       }
       
-      private function sortCorpsesByDistance(param1:Object, param2:Object) : int
-      {
-         var _loc3_:int = 0;
-         if(param1.distance < param2.distance)
-         {
-            _loc3_ = -1;
-         }
-         else if(param1.distance > param2.distance)
-         {
-            _loc3_ = 1;
-         }
-         return _loc3_;
-      }
-      
       private function doContainerToPlayerTransfer() : *
       {
+         var _loc4_:* = false;
          var _loc1_:Object = this.selectedListEntry;
          var _loc2_:* = this.selectedList == this.OfferInventory_mc;
          var _loc3_:Boolean = bNuclearWinterMode ? false : Boolean(_loc1_.isWeightless);
          if(this.selectedList.ItemList_mc.List_mc.filterer.EntryMatchesFilter(_loc1_))
          {
-            if(_loc1_.isCurrency)
+            _loc4_ = _loc1_.count > this.TRANSFER_ITEM_COUNT_THRESHOLD;
+            if(Boolean(_loc1_.isCurrency) || !_loc1_.singleItemTransfer && _loc4_ && !_loc3_)
             {
-               BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_TRANSFER_ITEM,{
-                  "serverHandleID":_loc1_.serverHandleID,
-                  "quantity":_loc1_.count,
-                  "fromContainer":_loc2_,
-                  "containerID":_loc1_.containerID
-               }));
-               GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_OK);
-            }
-            else if(!_loc1_.singleItemTransfer && _loc1_.count > this.TRANSFER_ITEM_COUNT_THRESHOLD && !_loc3_)
-            {
-               if(this.m_CorpseLootMode)
+               if(this.m_CorpseLootMode || Boolean(_loc1_.isCurrency))
                {
                   BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_TRANSFER_ITEM,{
                      "serverHandleID":_loc1_.serverHandleID,
@@ -1623,6 +1574,10 @@ package
                else
                {
                   this.openQuantityModal(this.qConfirm_TransferItem);
+               }
+               if(_loc1_.isCurrency)
+               {
+                  GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_OK);
                }
             }
             else if(_loc2_ || this.performContainerWeightCheck(_loc1_,1))
@@ -1993,11 +1948,7 @@ package
          }
          else
          {
-            _loc1_ = uint.MAX_VALUE;
-            if(this.m_CorpseLootMode)
-            {
-               _loc1_ = this.m_SelectedTab == 0 ? 0 : uint(this.m_ContainerIDs[this.m_SelectedTab - 1]);
-            }
+            _loc1_ = this.m_CorpseLootMode ? 0 : uint.MAX_VALUE;
             BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_TAKE_ALL,{"containerID":_loc1_}));
          }
          GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_OK);
@@ -2302,309 +2253,305 @@ package
       
       private function updateCategoryBar() : void
       {
-         var _loc1_:Boolean = false;
          this.m_HasNewTab = false;
-         if(!this.m_CorpseLootMode)
+         this.m_ItemFilters.splice(0);
+         this.m_IsFilteredCategory = true;
+         var _loc1_:Boolean = this.m_MenuMode == MODE_FERMENTER || this.m_MenuMode == MODE_CAMP_DISPENSER || this.m_MenuMode == MODE_REFRIGERATOR || this.m_MenuMode == MODE_FREEZER;
+         if(_loc1_)
          {
-            this.m_ItemFilters.splice(0);
-            this.m_IsFilteredCategory = true;
-            _loc1_ = this.m_MenuMode == MODE_FERMENTER || this.m_MenuMode == MODE_CAMP_DISPENSER || this.m_MenuMode == MODE_REFRIGERATOR || this.m_MenuMode == MODE_FREEZER;
-            if(_loc1_)
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryFoodWater",
+               "flag":FILTER_FOODWATER
+            });
+         }
+         else if(this.isScrapStash)
+         {
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryJunk",
+               "flag":FILTER_JUNK
+            });
+         }
+         else if(this.isAmmoStash)
+         {
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryAmmo",
+               "flag":FILTER_AMMO
+            });
+         }
+         else if(this.m_MenuMode == MODE_ALLY || this.m_SubMenuMode == SecureTradeShared.SUB_MODE_ARMOR_RACK)
+         {
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryArmor",
+               "flag":FILTER_ARMOR
+            });
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryApparel",
+               "flag":FILTER_APPAREL
+            });
+         }
+         else if(this.m_MenuMode == MODE_PET)
+         {
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryApparel",
+               "flag":FILTER_APPAREL
+            });
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_WEAPON_DISPLAY)
+         {
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryWeapons",
+               "flag":FILTER_WEAPONS
+            });
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_POWER_ARMOR_DISPLAY)
+         {
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryArmor",
+               "flag":FILTER_ARMOR
+            });
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_APPAREL_DISPLAY)
+         {
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryApparel",
+               "flag":FILTER_APPAREL
+            });
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_AID_DISPLAY)
+         {
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryAid",
+               "flag":FILTER_AID
+            });
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_BOOK_DISPLAY)
+         {
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryNotes",
+               "flag":FILTER_BOOKS
+            });
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_MISC_DISPLAY)
+         {
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryMisc",
+               "flag":FILTER_MISC
+            });
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_JUNK_DISPLAY)
+         {
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryJunk",
+               "flag":FILTER_JUNK
+            });
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_FOODWATER_DISPLAY)
+         {
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryFoodWater",
+               "flag":FILTER_FOODWATER
+            });
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_HOLO_DISPLAY)
+         {
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryHolo",
+               "flag":FILTER_HOLOTAPES
+            });
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_MODS_DISPLAY)
+         {
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryMods",
+               "flag":FILTER_MODS
+            });
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_AMMO_DISPLAY)
+         {
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryAmmo",
+               "flag":FILTER_AMMO
+            });
+         }
+         else
+         {
+            this.m_IsFilteredCategory = false;
+            if((this.m_MenuMode == MODE_NPCVENDING || this.m_MenuMode == MODE_CONTAINER) && !this.m_CorpseLootMode)
             {
+               this.m_HasNewTab = true;
                this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryFoodWater",
-                  "flag":FILTER_FOODWATER
-               });
-            }
-            else if(this.isScrapStash)
-            {
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryJunk",
-                  "flag":FILTER_JUNK
-               });
-            }
-            else if(this.isAmmoStash)
-            {
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryAmmo",
-                  "flag":FILTER_AMMO
-               });
-            }
-            else if(this.m_MenuMode == MODE_ALLY || this.m_SubMenuMode == SecureTradeShared.SUB_MODE_ARMOR_RACK)
-            {
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryArmor",
-                  "flag":FILTER_ARMOR
-               });
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryApparel",
-                  "flag":FILTER_APPAREL
-               });
-            }
-            else if(this.m_MenuMode == MODE_PET)
-            {
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryApparel",
-                  "flag":FILTER_APPAREL
-               });
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_WEAPON_DISPLAY)
-            {
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryWeapons",
-                  "flag":FILTER_WEAPONS
-               });
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_POWER_ARMOR_DISPLAY)
-            {
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryArmor",
-                  "flag":FILTER_ARMOR
-               });
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_APPAREL_DISPLAY)
-            {
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryApparel",
-                  "flag":FILTER_APPAREL
-               });
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_AID_DISPLAY)
-            {
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryAid",
-                  "flag":FILTER_AID
-               });
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_BOOK_DISPLAY)
-            {
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryNotes",
-                  "flag":FILTER_BOOKS
-               });
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_MISC_DISPLAY)
-            {
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryMisc",
-                  "flag":FILTER_MISC
-               });
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_JUNK_DISPLAY)
-            {
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryJunk",
-                  "flag":FILTER_JUNK
-               });
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_FOODWATER_DISPLAY)
-            {
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryFoodWater",
-                  "flag":FILTER_FOODWATER
-               });
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_HOLO_DISPLAY)
-            {
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryHolo",
-                  "flag":FILTER_HOLOTAPES
-               });
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_MODS_DISPLAY)
-            {
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryMods",
-                  "flag":FILTER_MODS
-               });
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_AMMO_DISPLAY)
-            {
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryAmmo",
-                  "flag":FILTER_AMMO
-               });
-            }
-            else
-            {
-               this.m_IsFilteredCategory = false;
-               if(this.m_MenuMode == MODE_NPCVENDING || this.m_MenuMode == MODE_CONTAINER)
-               {
-                  this.m_HasNewTab = true;
-                  this.m_ItemFilters.push({
-                     "text":"$InventoryCategoryNew",
-                     "flag":FILTER_ALL
-                  });
-               }
-               this.m_ItemFilters.push({
-                  "text":"$INVENTORY",
+                  "text":"$InventoryCategoryNew",
                   "flag":FILTER_ALL
                });
-               if(this.m_MenuMode != MODE_PLAYERVENDING)
-               {
-                  this.m_ItemFilters.push({
-                     "text":"$InventoryCategoryFavorites",
-                     "flag":FILTER_FAVORITES
-                  });
-               }
+            }
+            this.m_ItemFilters.push({
+               "text":"$INVENTORY",
+               "flag":FILTER_ALL
+            });
+            if(this.m_MenuMode != MODE_PLAYERVENDING && !this.m_CorpseLootMode)
+            {
                this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryWeapons",
-                  "flag":FILTER_WEAPONS
-               });
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryArmor",
-                  "flag":FILTER_ARMOR
-               });
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryApparel",
-                  "flag":FILTER_APPAREL
-               });
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryFoodWater",
-                  "flag":FILTER_FOODWATER
-               });
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryAid",
-                  "flag":FILTER_AID
-               });
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryMisc",
-                  "flag":FILTER_MISC
-               });
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryHolo",
-                  "flag":FILTER_HOLOTAPES
-               });
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryNotes",
-                  "flag":FILTER_BOOKS
-               });
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryJunk",
-                  "flag":FILTER_JUNK
-               });
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryMods",
-                  "flag":FILTER_MODS
-               });
-               this.m_ItemFilters.push({
-                  "text":"$InventoryCategoryAmmo",
-                  "flag":FILTER_AMMO
+                  "text":"$InventoryCategoryFavorites",
+                  "flag":FILTER_FAVORITES
                });
             }
-            this.m_TabMax = this.m_ItemFilters.length;
-            this.CategoryBar_mc.Clear();
-            this.CategoryBar_mc.forceUppercase = false;
-            if(_loc1_)
-            {
-               this.CategoryBar_mc.maxVisible = 1;
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryFoodWater",FILTER_FOODWATER,true);
-            }
-            else if(this.isScrapStash)
-            {
-               this.CategoryBar_mc.maxVisible = 1;
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryJunk",FILTER_JUNK,true);
-            }
-            else if(this.isAmmoStash)
-            {
-               this.CategoryBar_mc.maxVisible = 1;
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryAmmo",FILTER_AMMO,true);
-            }
-            else if(this.m_MenuMode == MODE_ALLY || this.m_SubMenuMode == SecureTradeShared.SUB_MODE_ARMOR_RACK)
-            {
-               this.CategoryBar_mc.maxVisible = 2;
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryArmor",FILTER_ARMOR,true);
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryApparel",FILTER_APPAREL,true);
-            }
-            else if(this.m_MenuMode == MODE_PET)
-            {
-               this.CategoryBar_mc.maxVisible = 1;
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryApparel",FILTER_APPAREL,true);
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_WEAPON_DISPLAY)
-            {
-               this.CategoryBar_mc.maxVisible = 1;
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryWeapons",FILTER_WEAPONS,true);
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_POWER_ARMOR_DISPLAY)
-            {
-               this.CategoryBar_mc.maxVisible = 1;
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryArmor",FILTER_ARMOR,true);
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_APPAREL_DISPLAY)
-            {
-               this.CategoryBar_mc.maxVisible = 1;
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryApparel",FILTER_APPAREL,true);
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_AID_DISPLAY)
-            {
-               this.CategoryBar_mc.maxVisible = 1;
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryAid",FILTER_AID,true);
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_BOOK_DISPLAY)
-            {
-               this.CategoryBar_mc.maxVisible = 1;
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryNotes",FILTER_BOOKS,true);
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_MISC_DISPLAY)
-            {
-               this.CategoryBar_mc.maxVisible = 1;
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryMisc",FILTER_MISC,true);
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_JUNK_DISPLAY)
-            {
-               this.CategoryBar_mc.maxVisible = 1;
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryJunk",FILTER_JUNK,true);
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_FOODWATER_DISPLAY)
-            {
-               this.CategoryBar_mc.maxVisible = 1;
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryFoodWater",FILTER_FOODWATER,true);
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_HOLO_DISPLAY)
-            {
-               this.CategoryBar_mc.maxVisible = 1;
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryHolo",FILTER_HOLOTAPES,true);
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_MODS_DISPLAY)
-            {
-               this.CategoryBar_mc.maxVisible = 1;
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryMods",FILTER_MODS,true);
-            }
-            else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_AMMO_DISPLAY)
-            {
-               this.CategoryBar_mc.maxVisible = 1;
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryAmmo",FILTER_AMMO,true);
-            }
-            else
-            {
-               this.CategoryBar_mc.maxVisible = 9;
-               if(this.m_MenuMode == MODE_NPCVENDING || this.m_MenuMode == MODE_CONTAINER)
-               {
-                  this.CategoryBar_mc.AddLabel("$InventoryCategoryNew",FILTER_NEW_ID,true);
-               }
-               this.CategoryBar_mc.AddLabel("$INVENTORY",FILTER_ALL,true);
-               if(this.m_MenuMode != MODE_PLAYERVENDING)
-               {
-                  this.CategoryBar_mc.AddLabel("$InventoryCategoryFavorites",FILTER_FAVORITES,true);
-               }
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryWeapons",FILTER_WEAPONS,true);
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryArmor",FILTER_ARMOR,true);
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryApparel",FILTER_APPAREL,true);
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryFoodWater",FILTER_FOODWATER,true);
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryAid",FILTER_AID,true);
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryMisc",FILTER_MISC,true);
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryHolo",FILTER_HOLOTAPES,true);
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryNotes",FILTER_BOOKS,true);
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryJunk",FILTER_JUNK,true);
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryMods",FILTER_MODS,true);
-               this.CategoryBar_mc.AddLabel("$InventoryCategoryAmmo",FILTER_AMMO,true);
-            }
-            this.CategoryBar_mc.Finalize();
-            this.CategoryBar_mc.SetSelection(this.selectedTab,true,false);
-            this.m_SelectedTabForceChange = true;
-            this.selectedTab = this.m_SelectedTab;
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryWeapons",
+               "flag":FILTER_WEAPONS
+            });
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryArmor",
+               "flag":FILTER_ARMOR
+            });
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryApparel",
+               "flag":FILTER_APPAREL
+            });
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryFoodWater",
+               "flag":FILTER_FOODWATER
+            });
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryAid",
+               "flag":FILTER_AID
+            });
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryMisc",
+               "flag":FILTER_MISC
+            });
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryHolo",
+               "flag":FILTER_HOLOTAPES
+            });
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryNotes",
+               "flag":FILTER_BOOKS
+            });
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryJunk",
+               "flag":FILTER_JUNK
+            });
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryMods",
+               "flag":FILTER_MODS
+            });
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryAmmo",
+               "flag":FILTER_AMMO
+            });
          }
+         this.m_TabMax = this.m_ItemFilters.length;
+         this.CategoryBar_mc.Clear();
+         this.CategoryBar_mc.forceUppercase = false;
+         if(_loc1_)
+         {
+            this.CategoryBar_mc.maxVisible = 1;
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryFoodWater",FILTER_FOODWATER,true);
+         }
+         else if(this.isScrapStash)
+         {
+            this.CategoryBar_mc.maxVisible = 1;
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryJunk",FILTER_JUNK,true);
+         }
+         else if(this.isAmmoStash)
+         {
+            this.CategoryBar_mc.maxVisible = 1;
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryAmmo",FILTER_AMMO,true);
+         }
+         else if(this.m_MenuMode == MODE_ALLY || this.m_SubMenuMode == SecureTradeShared.SUB_MODE_ARMOR_RACK)
+         {
+            this.CategoryBar_mc.maxVisible = 2;
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryArmor",FILTER_ARMOR,true);
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryApparel",FILTER_APPAREL,true);
+         }
+         else if(this.m_MenuMode == MODE_PET)
+         {
+            this.CategoryBar_mc.maxVisible = 1;
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryApparel",FILTER_APPAREL,true);
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_WEAPON_DISPLAY)
+         {
+            this.CategoryBar_mc.maxVisible = 1;
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryWeapons",FILTER_WEAPONS,true);
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_POWER_ARMOR_DISPLAY)
+         {
+            this.CategoryBar_mc.maxVisible = 1;
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryArmor",FILTER_ARMOR,true);
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_APPAREL_DISPLAY)
+         {
+            this.CategoryBar_mc.maxVisible = 1;
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryApparel",FILTER_APPAREL,true);
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_AID_DISPLAY)
+         {
+            this.CategoryBar_mc.maxVisible = 1;
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryAid",FILTER_AID,true);
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_BOOK_DISPLAY)
+         {
+            this.CategoryBar_mc.maxVisible = 1;
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryNotes",FILTER_BOOKS,true);
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_MISC_DISPLAY)
+         {
+            this.CategoryBar_mc.maxVisible = 1;
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryMisc",FILTER_MISC,true);
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_JUNK_DISPLAY)
+         {
+            this.CategoryBar_mc.maxVisible = 1;
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryJunk",FILTER_JUNK,true);
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_FOODWATER_DISPLAY)
+         {
+            this.CategoryBar_mc.maxVisible = 1;
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryFoodWater",FILTER_FOODWATER,true);
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_HOLO_DISPLAY)
+         {
+            this.CategoryBar_mc.maxVisible = 1;
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryHolo",FILTER_HOLOTAPES,true);
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_MODS_DISPLAY)
+         {
+            this.CategoryBar_mc.maxVisible = 1;
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryMods",FILTER_MODS,true);
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_AMMO_DISPLAY)
+         {
+            this.CategoryBar_mc.maxVisible = 1;
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryAmmo",FILTER_AMMO,true);
+         }
+         else
+         {
+            this.CategoryBar_mc.maxVisible = 9;
+            if((this.m_MenuMode == MODE_NPCVENDING || this.m_MenuMode == MODE_CONTAINER) && !this.m_CorpseLootMode)
+            {
+               this.CategoryBar_mc.AddLabel("$InventoryCategoryNew",FILTER_NEW_ID,true);
+            }
+            this.CategoryBar_mc.AddLabel("$INVENTORY",FILTER_ALL,true);
+            if(this.m_MenuMode != MODE_PLAYERVENDING && !this.m_CorpseLootMode)
+            {
+               this.CategoryBar_mc.AddLabel("$InventoryCategoryFavorites",FILTER_FAVORITES,true);
+            }
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryWeapons",FILTER_WEAPONS,true);
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryArmor",FILTER_ARMOR,true);
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryApparel",FILTER_APPAREL,true);
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryFoodWater",FILTER_FOODWATER,true);
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryAid",FILTER_AID,true);
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryMisc",FILTER_MISC,true);
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryHolo",FILTER_HOLOTAPES,true);
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryNotes",FILTER_BOOKS,true);
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryJunk",FILTER_JUNK,true);
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryMods",FILTER_MODS,true);
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryAmmo",FILTER_AMMO,true);
+         }
+         this.CategoryBar_mc.Finalize();
+         this.CategoryBar_mc.SetSelection(this.selectedTab,true,false);
+         this.m_SelectedTabForceChange = true;
+         this.selectedTab = this.m_SelectedTab;
       }
       
       private function ModeToButtonSwitchText(param1:uint) : String
@@ -3037,11 +2984,7 @@ package
          }
          else if(this.ModalConfirmTakeAll_mc.open)
          {
-            _loc2_ = uint.MAX_VALUE;
-            if(this.m_CorpseLootMode)
-            {
-               _loc2_ = this.m_SelectedTab == 0 ? 0 : uint(this.m_ContainerIDs[this.m_SelectedTab - 1]);
-            }
+            _loc2_ = this.m_CorpseLootMode ? 0 : uint.MAX_VALUE;
             BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_TAKE_ALL,{"containerID":_loc2_}));
          }
          else if(this.ModalConfirmScrap_mc.open)
@@ -3107,6 +3050,7 @@ package
       {
          this.SortListData(param1,this.m_OfferInventorySortField);
          this.OfferInventory_mc.ItemList_mc.List_mc.MenuListData = param1;
+         this.OfferInventory_mc.showDivisor = !this.m_CorpseLootMode;
          if(this.selectedList == this.OfferInventory_mc)
          {
             if(this.m_RefreshSelectionOption == REFRESH_SELECTION_SERVER_ID && this.m_SelectedItemServerHandleID > 0)
@@ -3408,12 +3352,16 @@ package
          {
             aListData.sort(function(param1:Object, param2:Object):int
             {
-               var _loc4_:String = null;
-               var _loc5_:Number = NaN;
-               var _loc6_:Number = NaN;
+               var _loc4_:int = 0;
+               var _loc5_:int = 0;
+               var _loc6_:String = null;
                var _loc7_:Number = NaN;
                var _loc8_:Number = NaN;
+               var _loc9_:Number = NaN;
+               var _loc10_:Number = NaN;
                var _loc3_:int = 0;
+               _loc4_ = int(param1.count);
+               _loc5_ = int(param2.count);
                if(Boolean(param1.vendingData.isVendedOnOtherMachine) && Boolean(param2.isOffered) && !param2.vendingData.isVendedOnOtherMachine)
                {
                   _loc3_ = 1;
@@ -3440,64 +3388,64 @@ package
                }
                else
                {
-                  _loc4_ = "";
+                  _loc6_ = "";
                   switch(aSortField)
                   {
                      case SOF_DAMAGE:
-                        _loc4_ = "damage";
+                        _loc6_ = "damage";
                         break;
                      case SOF_ROF:
-                        _loc4_ = "weaponDisplayRateOfFire";
+                        _loc6_ = "weaponDisplayRateOfFire";
                         break;
                      case SOF_RANGE:
-                        _loc4_ = "weaponDisplayRange";
+                        _loc6_ = "weaponDisplayRange";
                         break;
                      case SOF_ACCURACY:
-                        _loc4_ = "weaponDisplayAccuracy";
+                        _loc6_ = "weaponDisplayAccuracy";
                         break;
                      case SOF_VALUE:
-                        _loc4_ = "itemValue";
+                        _loc6_ = "itemValue";
                         break;
                      case SOF_WEIGHT:
-                        _loc4_ = "weight";
+                        _loc6_ = "weight";
                         break;
                      case SOF_STACKWEIGHT:
-                        _loc5_ = param1.count * param1.weight;
-                        _loc6_ = param2.count * param2.weight;
-                        if(_loc5_ != _loc6_)
+                        _loc7_ = _loc4_ * param1.weight;
+                        _loc8_ = _loc5_ * param2.weight;
+                        if(_loc7_ != _loc8_)
                         {
-                           _loc3_ = _loc5_ < _loc6_ ? 1 : -1;
+                           _loc3_ = _loc7_ < _loc8_ ? 1 : -1;
                         }
                         break;
                      case SOF_SPOILAGE:
-                        _loc7_ = param1.currentHealth >= 0 ? param1.currentHealth / param1.maximumHealth : 1;
-                        _loc8_ = param2.currentHealth >= 0 ? param2.currentHealth / param2.maximumHealth : 1;
-                        if(_loc7_ != _loc8_)
+                        _loc9_ = param1.currentHealth >= 0 ? param1.currentHealth / param1.maximumHealth : 1;
+                        _loc10_ = param2.currentHealth >= 0 ? param2.currentHealth / param2.maximumHealth : 1;
+                        if(_loc9_ != _loc10_)
                         {
-                           _loc3_ = _loc7_ < _loc8_ ? -1 : 1;
+                           _loc3_ = _loc9_ < _loc10_ ? -1 : 1;
                         }
                         break;
                      default:
-                        _loc4_ = "isLearnedRecipe";
+                        _loc6_ = "isLearnedRecipe";
                   }
-                  if(_loc4_ == "isLearnedRecipe")
+                  if(_loc6_ == "isLearnedRecipe")
                   {
-                     if(param1[_loc4_] < param2[_loc4_])
+                     if(param1[_loc6_] < param2[_loc6_])
                      {
                         _loc3_ = -1;
                      }
-                     else if(param1[_loc4_] > param2[_loc4_])
+                     else if(param1[_loc6_] > param2[_loc6_])
                      {
                         _loc3_ = 1;
                      }
                   }
-                  else if(_loc4_ != "")
+                  else if(_loc6_ != "")
                   {
-                     if(param1[_loc4_] < param2[_loc4_])
+                     if(param1[_loc6_] < param2[_loc6_])
                      {
                         _loc3_ = 1;
                      }
-                     else if(param1[_loc4_] > param2[_loc4_])
+                     else if(param1[_loc6_] > param2[_loc6_])
                      {
                         _loc3_ = -1;
                      }
@@ -3526,11 +3474,11 @@ package
                   }
                   if(_loc3_ == 0)
                   {
-                     if((param1.itemCategory & FILTER_AMMO) != 0 && (param2.itemCategory & FILTER_AMMO) == 0)
+                     if((param1.filterFlag & FILTER_AMMO) != 0 && (param2.filterFlag & FILTER_AMMO) == 0)
                      {
                         _loc3_ = -1;
                      }
-                     else if((param1.itemCategory & FILTER_AMMO) == 0 && (param2.itemCategory & FILTER_AMMO) != 0)
+                     else if((param1.filterFlag & FILTER_AMMO) == 0 && (param2.filterFlag & FILTER_AMMO) != 0)
                      {
                         _loc3_ = 1;
                      }
@@ -3546,11 +3494,11 @@ package
                   {
                      _loc3_ = 1;
                   }
-                  else if(param1.count < param2.count)
+                  else if(_loc4_ < _loc5_)
                   {
                      _loc3_ = -1;
                   }
-                  else if(param1.count > param2.count)
+                  else if(_loc4_ > _loc5_)
                   {
                      _loc3_ = 1;
                   }
@@ -3614,14 +3562,7 @@ package
             }
             if(param1.ItemList_mc.List_mc.filterer != undefined && param1.ItemList_mc.List_mc.filterer != null)
             {
-               if(this.m_CorpseLootMode && param1 == this.PlayerInventory_mc)
-               {
-                  _loc3_ = Boolean(param1.ItemList_mc.List_mc.filterer.IsFilterEmpty(this.m_ItemFilters[0].flag));
-               }
-               else
-               {
-                  _loc3_ = Boolean(param1.ItemList_mc.List_mc.filterer.IsFilterEmpty(this.m_ItemFilters[this.m_SelectedTab].flag));
-               }
+               _loc3_ = Boolean(param1.ItemList_mc.List_mc.filterer.IsFilterEmpty(this.m_ItemFilters[this.m_SelectedTab].flag));
             }
          }
          return _loc2_ || _loc3_;

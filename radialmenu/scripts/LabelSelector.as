@@ -91,8 +91,6 @@ package
       
       private var FoundSelection:Boolean = false;
       
-      private var m_CorpseLootMode:Boolean = false;
-      
       private var m_UseMiddleAsCenter:Boolean = true;
       
       private const AnimFrameCount:Number = 5;
@@ -139,16 +137,6 @@ package
       public function get rButtonData() : BSButtonHintData
       {
          return this.RBButtonData;
-      }
-      
-      public function set CorpseLootMode(param1:Boolean) : void
-      {
-         this.m_CorpseLootMode = param1;
-      }
-      
-      public function get CorpseLootMode() : Boolean
-      {
-         return this.m_CorpseLootMode;
       }
       
       public function set middleAsCenter(param1:Boolean) : void
@@ -270,7 +258,7 @@ package
       
       public function AddLabel(param1:String, param2:uint, param3:Boolean) : *
       {
-         var _loc4_:* = new this.LabelClass(param1,param2,this.m_ForceUppercase,this.m_CorpseLootMode) as LabelItem;
+         var _loc4_:* = new this.LabelClass(param1,param2,this.m_ForceUppercase) as LabelItem;
          this.Slider_mc.addChild(_loc4_);
          _loc4_.selectable = param3;
          _loc4_.addEventListener(MouseEvent.CLICK,this.OnLabelPressed);
@@ -299,10 +287,7 @@ package
             while(_loc2_ < this.LabelsA.length)
             {
                this.MaxStringWidth = Math.max(this.MaxStringWidth,this.LabelsA[_loc2_].textWidth);
-               if(!this.CorpseLootMode)
-               {
-                  this.MaxStringWidth = Math.min(this.MaxStringWidth,MAX_LABEL_WIDTH);
-               }
+               this.MaxStringWidth = Math.min(this.MaxStringWidth,MAX_LABEL_WIDTH);
                _loc2_++;
             }
          }

@@ -35,6 +35,8 @@ package
       
       private var m_showTooltip:* = false;
       
+      private var m_showDivisor:* = true;
+      
       private var m_Currency:Number = 0;
       
       private var m_ownsVendor:Boolean = false;
@@ -117,6 +119,12 @@ package
          this.UpdateTooltipVisibility();
       }
       
+      public function set showDivisor(param1:Boolean) : void
+      {
+         this.m_showDivisor = param1;
+         this.redrawUIComponent();
+      }
+      
       public function set showCurrency(param1:Boolean) : void
       {
          this.OfferCurrency_tf.visible = param1;
@@ -133,7 +141,7 @@ package
       {
          super.redrawUIComponent();
          this.OfferCurrency_tf.text = this.m_Currency.toString();
-         this.OfferWeight_tf.text = this.m_CarryWeightCurrent + " / " + this.m_CarryWeightMax;
+         this.OfferWeight_tf.text = this.m_CarryWeightCurrent + (!!this.m_showDivisor ? " / " + this.m_CarryWeightMax : "");
       }
       
       public function UpdateTooltips() : void
