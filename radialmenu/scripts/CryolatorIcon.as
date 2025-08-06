@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol221")]
    public dynamic class CryolatorIcon extends MovieClip
    {
-       
       
       public function CryolatorIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

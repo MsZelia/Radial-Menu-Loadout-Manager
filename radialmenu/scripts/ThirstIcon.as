@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol16")]
    public dynamic class ThirstIcon extends MovieClip
    {
-       
       
       public function ThirstIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

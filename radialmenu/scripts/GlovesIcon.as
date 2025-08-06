@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol164")]
    public dynamic class GlovesIcon extends MovieClip
    {
-       
       
       public function GlovesIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

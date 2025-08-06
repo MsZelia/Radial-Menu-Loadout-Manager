@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol105")]
    public dynamic class MissileLauncherIcon extends MovieClip
    {
-       
       
       public function MissileLauncherIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

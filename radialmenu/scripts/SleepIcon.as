@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol34")]
    public dynamic class SleepIcon extends MovieClip
    {
-       
       
       public function SleepIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

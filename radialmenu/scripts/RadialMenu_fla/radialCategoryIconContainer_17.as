@@ -5,7 +5,6 @@ package RadialMenu_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol490")]
    public dynamic class radialCategoryIconContainer_17 extends MovieClip
    {
-       
       
       public var Body:radialCategoryIconContainerBody;
       
@@ -31,3 +30,4 @@ package RadialMenu_fla
       }
    }
 }
+

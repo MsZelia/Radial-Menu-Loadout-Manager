@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol251")]
    public dynamic class BookIcon extends MovieClip
    {
-       
       
       public function BookIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

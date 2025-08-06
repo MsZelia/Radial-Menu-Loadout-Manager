@@ -17,6 +17,16 @@ package
    public class RadialMenuLoadoutConfig
    {
       
+      private static var config:*;
+      
+      private static var errorMessage_tf:TextField;
+      
+      private static var errorMessageLastDisplay:Number;
+      
+      private static var loadouts_tf:TextField;
+      
+      private static var errorCode:String;
+      
       private static const MOD_NAME:String = "RadialMenuLoadoutManager";
       
       private static const MOD_VERSION:String = "1.0.5";
@@ -33,8 +43,6 @@ package
       
       public static var DEBUG_EVENTS:Boolean = false;
       
-      private static var config:*;
-      
       private static var radialMenu:* = null;
       
       private static var PlayerInventoryData:* = null;
@@ -47,20 +55,11 @@ package
       
       private static var initialized:Boolean = false;
       
-      private static var errorMessage_tf:TextField;
-      
-      private static var errorMessageLastDisplay:Number;
-      
       private static var lastErrorUID:uint = 0;
-      
-      private static var loadouts_tf:TextField;
       
       private static var selectedLoadoutId:int = 0;
       
       private static var validLoadouts:Array = [];
-      
-      private static var errorCode:String;
-       
       
       public function RadialMenuLoadoutConfig()
       {
@@ -860,3 +859,4 @@ package
       }
    }
 }
+

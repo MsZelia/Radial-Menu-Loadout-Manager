@@ -190,7 +190,6 @@ package
       public static const REFRESH_SELECTION_NAME_COUNT:int = 2;
       
       public static const HEIGHT_BUFFER:uint = 250;
-       
       
       public var ButtonHintBar_mc:BSButtonHintBar;
       
@@ -256,7 +255,7 @@ package
       
       private var ShowHistoryButton:BSButtonHintData;
       
-      private var ButtonHintDataV:Vector.<BSButtonHintData>;
+      private var ButtonHintDataV:Vector.<BSButtonHintData> = new <BSButtonHintData>[this.AcceptButton,this.DeclineItemAcceptButton,this.DeclineItemCancelButton,this.ButtonDecline,this.ButtonToggleAssign,this.ScrapButton,this.InspectButton,this.ButtonPlayerInventory,this.ButtonContainerInventory,this.StoreUnusedItemsButton,this.TakeAllButton,this.SortButton,this.ButtonOffersOnly,this.ToggleShowMarkedItemsOnlyButton,this.ShowHistoryButton,this.ExitButton];
       
       private const NO_FILTER_ID:int = -1;
       
@@ -338,7 +337,7 @@ package
       
       private var m_onlyTakingAllowed:Boolean = false;
       
-      private var m_SortFieldText:Array;
+      private var m_SortFieldText:Array = ["$SORT","$SORT_DMG","$SORT_ROF","$SORT_RNG","$SORT_ACC","$SORT_VAL","$SORT_WT","$SORT_SW","$SORT_SPL"];
       
       private var m_PlayerInventorySortField:int = 0;
       
@@ -360,15 +359,15 @@ package
       
       private var m_ToolTipDefaultHeight:Number;
       
-      private var m_MyOffersData:Array;
+      private var m_MyOffersData:Array = new Array();
       
-      private var m_TheirOffersData:Array;
+      private var m_TheirOffersData:Array = new Array();
       
-      private var m_PlayerInvData:Array;
+      private var m_PlayerInvData:Array = new Array();
       
-      private var m_OtherInvData:Array;
+      private var m_OtherInvData:Array = new Array();
       
-      private var m_NewItems:Array;
+      private var m_NewItems:Array = new Array();
       
       private var m_ShowOffersOnly:Boolean = false;
       
@@ -434,13 +433,6 @@ package
          this.DeclineItemCancelButton = new BSButtonHintData("$CANCEL","TAB","PSN_B","Xenon_B",1,this.onBackButton);
          this.ToggleShowMarkedItemsOnlyButton = new BSButtonHintData("","T","PSN_Y","Xenon_Y",1,this.onToggleShowMarkedItemsOnlyButton);
          this.ShowHistoryButton = new BSButtonHintData("$CAMP_SLOTS_VENDING_HISTORY","V","PSN_Select","Xenon_Select",1,this.onShowHistory);
-         this.ButtonHintDataV = new <BSButtonHintData>[this.AcceptButton,this.DeclineItemAcceptButton,this.DeclineItemCancelButton,this.ButtonDecline,this.ButtonToggleAssign,this.ScrapButton,this.InspectButton,this.ButtonPlayerInventory,this.ButtonContainerInventory,this.StoreUnusedItemsButton,this.TakeAllButton,this.SortButton,this.ButtonOffersOnly,this.ToggleShowMarkedItemsOnlyButton,this.ShowHistoryButton,this.ExitButton];
-         this.m_SortFieldText = ["$SORT","$SORT_DMG","$SORT_ROF","$SORT_RNG","$SORT_ACC","$SORT_VAL","$SORT_WT","$SORT_SW","$SORT_SPL"];
-         this.m_MyOffersData = new Array();
-         this.m_TheirOffersData = new Array();
-         this.m_PlayerInvData = new Array();
-         this.m_OtherInvData = new Array();
-         this.m_NewItems = new Array();
          super();
          this.ButtonHintBar_mc.useVaultTecColor = true;
          this.m_ItemFilters = new Array();
@@ -1041,7 +1033,7 @@ package
          {
             this.closeConfirmPurchaseModal(true);
             _loc2_ = Math.min(this.selectedListEntry.count,this.ModalSetQuantity_mc.quantity);
-            _loc3_ = !!this.selectedListEntry.isOffered ? Number(this.selectedListEntry.offerValue) : Number(this.selectedListEntry.itemValue);
+            _loc3_ = this.selectedListEntry.isOffered ? Number(this.selectedListEntry.offerValue) : Number(this.selectedListEntry.itemValue);
             if(this.m_MenuMode == MODE_NPCVENDING)
             {
                BSUIDataManager.dispatchEvent(new CustomEvent(this.selectedList == this.PlayerInventory_mc ? EVENT_NPC_SELL_ITEM : EVENT_NPC_BUY_ITEM,{
@@ -2078,7 +2070,7 @@ package
             this.ModalConfirmPurchase_mc.header = "$CONFIRMSALE";
          }
          var _loc2_:Number = Math.min(this.selectedListEntry.count,this.ModalSetQuantity_mc.quantity);
-         var _loc3_:Number = !!this.selectedListEntry.isOffered ? Number(this.selectedListEntry.offerValue) : Number(this.selectedListEntry.itemValue);
+         var _loc3_:Number = this.selectedListEntry.isOffered ? Number(this.selectedListEntry.offerValue) : Number(this.selectedListEntry.itemValue);
          this.ModalConfirmPurchase_mc.value = (_loc3_ * _loc2_).toString();
          var _loc4_:String = this.selectedListEntry.text;
          this.ModalConfirmPurchase_mc.tooltip = "";
@@ -2182,7 +2174,7 @@ package
          var _loc3_:Number = Number(this.OfferInventory_mc.OfferCurrency_tf.text);
          var _loc4_:Number = Number(this.PlayerInventory_mc.PlayerCurrency_tf.text);
          var _loc5_:Number = this.selectedList == this.PlayerInventory_mc ? _loc3_ : _loc4_;
-         var _loc6_:Number = !!this.selectedListEntry ? Number(this.selectedListEntry.count) : 1;
+         var _loc6_:Number = this.selectedListEntry ? Number(this.selectedListEntry.count) : 1;
          if(param1)
          {
             if(!this.m_OwnsVendor && this.m_MenuMode == MODE_PLAYERVENDING && Boolean(this.selectedListEntry.isOffered))
@@ -2759,7 +2751,7 @@ package
                      this.AcceptButton.ButtonDisabled = _loc4_ && _loc2_.isTradable == false;
                      if(_loc4_)
                      {
-                        this.AcceptButton.ButtonText = !!_loc2_.isOffered ? "$BUY" : (!!_loc2_.isRequested ? "$CANCEL" : "$REQUEST");
+                        this.AcceptButton.ButtonText = _loc2_.isOffered ? "$BUY" : (_loc2_.isRequested ? "$CANCEL" : "$REQUEST");
                      }
                      else
                      {
@@ -3664,3 +3656,4 @@ package
       }
    }
 }
+

@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol28")]
    public dynamic class StimpakIcon extends MovieClip
    {
-       
       
       public function StimpakIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

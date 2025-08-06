@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol1")]
    public dynamic class radialIconEmpty extends MovieClip
    {
-       
       
       public function radialIconEmpty()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

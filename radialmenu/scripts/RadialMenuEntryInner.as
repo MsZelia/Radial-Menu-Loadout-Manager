@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol493")]
    public class RadialMenuEntryInner extends RadialMenuEntry
    {
-       
       
       public var Expanded_mc:MovieClip;
       
@@ -102,3 +101,4 @@ package
       }
    }
 }
+

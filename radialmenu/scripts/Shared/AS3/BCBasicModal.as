@@ -33,7 +33,6 @@ package Shared.AS3
       public static const BUTTON_MODE_BAR:uint = 2;
       
       public static const BACKGROUND_MINWIDTH:Number = 750;
-       
       
       public var Header_mc:MovieClip;
       
@@ -391,3 +390,4 @@ package Shared.AS3
       }
    }
 }
+

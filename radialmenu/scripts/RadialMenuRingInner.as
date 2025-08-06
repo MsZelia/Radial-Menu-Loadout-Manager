@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol494")]
    public class RadialMenuRingInner extends RadialMenuRing
    {
-       
       
       private var m_Expanded:Boolean = false;
       
@@ -51,3 +50,4 @@ package
       }
    }
 }
+

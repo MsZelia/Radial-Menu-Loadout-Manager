@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol111")]
    public dynamic class MineIcon extends MovieClip
    {
-       
       
       public function MineIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

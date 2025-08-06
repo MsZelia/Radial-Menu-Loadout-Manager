@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol69")]
    public dynamic class PlasmaPistolIcon extends MovieClip
    {
-       
       
       public function PlasmaPistolIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol309")]
    public dynamic class BabylonNukeBriefcaseIcon extends MovieClip
    {
-       
       
       public function BabylonNukeBriefcaseIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

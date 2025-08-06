@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol161")]
    public dynamic class HandToHandIcon extends MovieClip
    {
-       
       
       public function HandToHandIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

@@ -6,7 +6,6 @@ package
    
    public class RadialMenuRing extends MovieClip
    {
-       
       
       public var RadialEntry0_mc:MovieClip;
       
@@ -169,7 +168,8 @@ package
          while(_loc5_ < _loc2_.items.length)
          {
             _loc3_ = _loc2_.items[_loc5_];
-            (_loc4_ = this.m_Entries[_loc5_]).itemVisible = _loc3_.visible;
+            _loc4_ = this.m_Entries[_loc5_];
+            _loc4_.itemVisible = _loc3_.visible;
             _loc4_.exists = _loc3_.exists;
             _loc4_.icon = _loc3_.icon;
             _loc4_.data = _loc3_;
@@ -249,3 +249,4 @@ package
       }
    }
 }
+

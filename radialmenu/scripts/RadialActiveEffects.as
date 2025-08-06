@@ -13,7 +13,6 @@ package
       public static const ACTIVE_EFFECT_PADDING:int = 7;
       
       public static const ACTIVE_EFFECT_BUFFER:int = 12;
-       
       
       public var Header_tf:TextField;
       
@@ -44,7 +43,8 @@ package
             {
                if(_loc2_[_loc3_].effectName != "")
                {
-                  (_loc5_ = new RadialActiveEffectEntry()).UpdateEffectEntry(_loc2_[_loc3_]);
+                  _loc5_ = new RadialActiveEffectEntry();
+                  _loc5_.UpdateEffectEntry(_loc2_[_loc3_]);
                   _loc5_.y = this.EntryList_mc.numChildren * (_loc5_.height + ACTIVE_EFFECT_PADDING);
                   this.EntryList_mc.addChild(_loc5_);
                }
@@ -61,3 +61,4 @@ package
       }
    }
 }
+

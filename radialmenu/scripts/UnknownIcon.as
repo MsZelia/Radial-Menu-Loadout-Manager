@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol7")]
    public dynamic class UnknownIcon extends MovieClip
    {
-       
       
       public function UnknownIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

@@ -5,7 +5,6 @@ package RadialMenu_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol480")]
    public dynamic class Tier1Backer_24 extends MovieClip
    {
-       
       
       public function Tier1Backer_24()
       {
@@ -19,3 +18,4 @@ package RadialMenu_fla
       }
    }
 }
+

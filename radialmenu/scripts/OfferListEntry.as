@@ -23,7 +23,6 @@ package
       public static var currencyType:uint = SecureTradeShared.CURRENCY_CAPS;
       
       private static const CONDITION_SPACING:Number = 6;
-       
       
       public var Price_tf:TextField;
       
@@ -317,3 +316,4 @@ package
       }
    }
 }
+

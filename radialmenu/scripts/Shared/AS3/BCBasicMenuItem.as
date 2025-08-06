@@ -4,7 +4,6 @@ package Shared.AS3
    
    public class BCBasicMenuItem extends MovieClip
    {
-       
       
       public var Sizer_mc:MovieClip;
       
@@ -106,3 +105,4 @@ package Shared.AS3
       }
    }
 }
+

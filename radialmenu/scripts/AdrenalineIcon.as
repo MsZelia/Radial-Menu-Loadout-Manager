@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol281")]
    public dynamic class AdrenalineIcon extends MovieClip
    {
-       
       
       public function AdrenalineIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

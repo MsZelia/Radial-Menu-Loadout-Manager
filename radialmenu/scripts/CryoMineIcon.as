@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol218")]
    public dynamic class CryoMineIcon extends MovieClip
    {
-       
       
       public function CryoMineIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

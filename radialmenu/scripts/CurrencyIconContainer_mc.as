@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol301")]
    public dynamic class CurrencyIconContainer_mc extends SWFLoaderClip
    {
-       
       
       public function CurrencyIconContainer_mc()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

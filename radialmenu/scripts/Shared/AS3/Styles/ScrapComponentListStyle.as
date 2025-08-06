@@ -14,7 +14,6 @@ package Shared.AS3.Styles
       public static var disableInput_Inspectable:Boolean = false;
       
       public static var disableSelection_Inspectable:Boolean = true;
-       
       
       public function ScrapComponentListStyle()
       {
@@ -22,3 +21,4 @@ package Shared.AS3.Styles
       }
    }
 }
+

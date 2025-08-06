@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol102")]
    public dynamic class MolotovIcon extends MovieClip
    {
-       
       
       public function MolotovIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol248")]
    public dynamic class BottlecapMineIcon extends MovieClip
    {
-       
       
       public function BottlecapMineIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

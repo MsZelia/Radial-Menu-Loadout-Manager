@@ -7,7 +7,6 @@ package
    
    public class ItemListEntry extends ItemListEntryBase
    {
-       
       
       public var LeftIcon_mc:MovieClip;
       
@@ -69,8 +68,8 @@ package
                this.LeftIcon_mc.BarterIcon_mc.visible = _loc4_ < 0;
             }
          }
-         var _loc6_:Array;
-         (_loc6_ = []).push({
+         var _loc6_:Array = [];
+         _loc6_.push({
             "clip":this.FavoriteIcon_mc,
             "visible":param1.favorite > 0
          });
@@ -88,7 +87,7 @@ package
          });
          if(this.questItemIcon_mc)
          {
-            this.questItemIcon_mc.gotoAndStop(!!param1.isSharedQuestItem ? "shared" : "local");
+            this.questItemIcon_mc.gotoAndStop(param1.isSharedQuestItem ? "shared" : "local");
          }
          if(this.SetBonusIcon_mc)
          {
@@ -99,7 +98,8 @@ package
          var _loc10_:* = 0;
          while(_loc10_ < _loc6_.length)
          {
-            if((_loc9_ = _loc6_[_loc10_]).clip != null)
+            _loc9_ = _loc6_[_loc10_];
+            if(_loc9_.clip != null)
             {
                _loc9_.clip.visible = _loc9_.visible;
                if(_loc9_.visible == true)
@@ -131,3 +131,4 @@ package
       }
    }
 }
+

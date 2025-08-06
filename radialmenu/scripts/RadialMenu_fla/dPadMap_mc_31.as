@@ -6,7 +6,6 @@ package RadialMenu_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol640")]
    public dynamic class dPadMap_mc_31 extends MovieClip
    {
-       
       
       public var labelUp_tf:TextField;
       
@@ -37,3 +36,4 @@ package RadialMenu_fla
       }
    }
 }
+

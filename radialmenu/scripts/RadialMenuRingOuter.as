@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol509")]
    public class RadialMenuRingOuter extends RadialMenuRing
    {
-       
       
       public function RadialMenuRingOuter()
       {
@@ -37,3 +36,4 @@ package
       }
    }
 }
+

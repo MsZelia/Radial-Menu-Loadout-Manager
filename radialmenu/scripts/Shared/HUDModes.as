@@ -66,7 +66,6 @@ package Shared
       public static const LEGENDARY_PERKS_MODE:String = "LegendaryPerksMode";
       
       public static const FISHING_MODE:String = "Fishing";
-       
       
       public function HUDModes()
       {
@@ -74,3 +73,4 @@ package Shared
       }
    }
 }
+

@@ -5,7 +5,6 @@ package RadialMenu_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol623")]
    public dynamic class colorConditionMeter_6 extends MovieClip
    {
-       
       
       public var MeterClip_mc:MovieClip;
       
@@ -21,3 +20,4 @@ package RadialMenu_fla
       }
    }
 }
+

@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol96")]
    public dynamic class NukaGrenadeIcon extends MovieClip
    {
-       
       
       public function NukaGrenadeIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

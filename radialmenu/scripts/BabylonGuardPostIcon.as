@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol313")]
    public dynamic class BabylonGuardPostIcon extends MovieClip
    {
-       
       
       public function BabylonGuardPostIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

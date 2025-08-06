@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol230")]
    public dynamic class ClothesIcon extends MovieClip
    {
-       
       
       public function ClothesIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

@@ -6,7 +6,6 @@ package RadialMenu_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol655")]
    public dynamic class radialTab_37 extends MovieClip
    {
-       
       
       public var ModeBlade_mc:MovieClip;
       
@@ -34,3 +33,4 @@ package RadialMenu_fla
       }
    }
 }
+

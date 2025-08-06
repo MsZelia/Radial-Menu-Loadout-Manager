@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol305")]
    public dynamic class BabylonStaircase extends MovieClip
    {
-       
       
       public function BabylonStaircase()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

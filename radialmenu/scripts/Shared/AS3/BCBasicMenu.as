@@ -21,7 +21,6 @@ package Shared.AS3
       public static const LIST_ITEMS_CREATED:String = "BSScrollingList::listItemsCreated";
       
       public static const PLAY_FOCUS_SOUND:String = "BSScrollingList::playFocusSound";
-       
       
       public var Backer_mc:MovieClip;
       
@@ -41,14 +40,12 @@ package Shared.AS3
       
       private var m_ButtonPressAction:Function;
       
-      private var m_AcceptButton:BSButtonHintData;
+      private var m_AcceptButton:BSButtonHintData = new BSButtonHintData("$ACCEPT","Enter","PSN_A","Xenon_A",1,this.onItemPress);
       
-      private var m_CancelButton:BSButtonHintData;
+      private var m_CancelButton:BSButtonHintData = new BSButtonHintData("$CANCEL","Esc","PSN_B","Xenon_B",1,this.onMenuCancel);
       
       public function BCBasicMenu()
       {
-         this.m_AcceptButton = new BSButtonHintData("$ACCEPT","Enter","PSN_A","Xenon_A",1,this.onItemPress);
-         this.m_CancelButton = new BSButtonHintData("$CANCEL","Esc","PSN_B","Xenon_B",1,this.onMenuCancel);
          super();
          addEventListener(KeyboardEvent.KEY_DOWN,this.onKeyDown);
          addEventListener(KeyboardEvent.KEY_UP,this.onKeyUp);
@@ -260,3 +257,4 @@ package Shared.AS3
       }
    }
 }
+

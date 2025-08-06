@@ -5,7 +5,6 @@ package RadialMenu_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol523")]
    public dynamic class MeterClip_7 extends MovieClip
    {
-       
       
       public function MeterClip_7()
       {
@@ -19,3 +18,4 @@ package RadialMenu_fla
       }
    }
 }
+

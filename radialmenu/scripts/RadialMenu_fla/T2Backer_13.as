@@ -5,7 +5,6 @@ package RadialMenu_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol502")]
    public dynamic class T2Backer_13 extends MovieClip
    {
-       
       
       public function T2Backer_13()
       {
@@ -19,3 +18,4 @@ package RadialMenu_fla
       }
    }
 }
+

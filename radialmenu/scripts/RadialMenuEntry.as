@@ -23,7 +23,6 @@ package
       public static const PC_HOTKEYS_BE:String = "1234567890)-";
       
       public static const MOUSE_OVER:String = "RadialMenuEntry::mouse_over";
-       
       
       public var Icon_mc:MovieClip;
       
@@ -244,3 +243,4 @@ package
       }
    }
 }
+

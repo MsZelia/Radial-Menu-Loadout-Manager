@@ -3,7 +3,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol508")]
    public class RadialMenuEntryOuter extends RadialMenuEntry
    {
-       
       
       public function RadialMenuEntryOuter()
       {
@@ -70,3 +69,4 @@ package
       }
    }
 }
+

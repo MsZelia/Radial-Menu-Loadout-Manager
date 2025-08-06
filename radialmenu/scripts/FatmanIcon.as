@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol194")]
    public dynamic class FatmanIcon extends MovieClip
    {
-       
       
       public function FatmanIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

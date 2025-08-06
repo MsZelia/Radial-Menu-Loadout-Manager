@@ -12,7 +12,6 @@ package Shared.AS3.Styles
       public static var useBackground:Boolean = false;
       
       public static var verticalSpacing_Inspectable:Number = 6.5;
-       
       
       public function SecureTrade_PlayerListStyle()
       {
@@ -20,3 +19,4 @@ package Shared.AS3.Styles
       }
    }
 }
+

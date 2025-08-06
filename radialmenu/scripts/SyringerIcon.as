@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol19")]
    public dynamic class SyringerIcon extends MovieClip
    {
-       
       
       public function SyringerIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

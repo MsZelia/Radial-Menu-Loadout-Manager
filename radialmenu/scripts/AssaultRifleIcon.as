@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol266")]
    public dynamic class AssaultRifleIcon extends MovieClip
    {
-       
       
       public function AssaultRifleIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

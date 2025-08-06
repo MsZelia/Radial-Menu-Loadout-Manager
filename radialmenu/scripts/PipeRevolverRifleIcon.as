@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol82")]
    public dynamic class PipeRevolverRifleIcon extends MovieClip
    {
-       
       
       public function PipeRevolverRifleIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol51")]
    public dynamic class RepairKitIcon extends MovieClip
    {
-       
       
       public function RepairKitIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

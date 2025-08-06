@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol191")]
    public dynamic class FlamerIcon extends MovieClip
    {
-       
       
       public function FlamerIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

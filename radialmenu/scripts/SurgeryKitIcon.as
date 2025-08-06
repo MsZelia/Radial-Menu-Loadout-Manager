@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol22")]
    public dynamic class SurgeryKitIcon extends MovieClip
    {
-       
       
       public function SurgeryKitIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

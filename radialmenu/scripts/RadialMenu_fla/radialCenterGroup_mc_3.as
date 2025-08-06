@@ -6,7 +6,6 @@ package RadialMenu_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol627")]
    public dynamic class radialCenterGroup_mc_3 extends MovieClip
    {
-       
       
       public var ConditionBar_mc:MovieClip;
       
@@ -39,3 +38,4 @@ package RadialMenu_fla
       }
    }
 }
+

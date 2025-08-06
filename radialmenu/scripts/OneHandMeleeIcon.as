@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol90")]
    public dynamic class OneHandMeleeIcon extends MovieClip
    {
-       
       
       public function OneHandMeleeIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

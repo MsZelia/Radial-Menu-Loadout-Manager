@@ -5,7 +5,6 @@ package RadialMenu_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol473")]
    public dynamic class selectorFill_mc_23 extends MovieClip
    {
-       
       
       public function selectorFill_mc_23()
       {
@@ -24,3 +23,4 @@ package RadialMenu_fla
       }
    }
 }
+

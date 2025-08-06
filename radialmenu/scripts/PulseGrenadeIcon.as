@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol60")]
    public dynamic class PulseGrenadeIcon extends MovieClip
    {
-       
       
       public function PulseGrenadeIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

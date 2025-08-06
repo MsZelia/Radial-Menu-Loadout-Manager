@@ -11,7 +11,6 @@ package
    
    public class SecureTradeOfferInventory extends SecureTradeInventory
    {
-       
       
       public var Tooltip_mc:MovieClip;
       
@@ -141,7 +140,7 @@ package
       {
          super.redrawUIComponent();
          this.OfferCurrency_tf.text = this.m_Currency.toString();
-         this.OfferWeight_tf.text = this.m_CarryWeightCurrent + (!!this.m_showDivisor ? " / " + this.m_CarryWeightMax : "");
+         this.OfferWeight_tf.text = this.m_CarryWeightCurrent + (this.m_showDivisor ? " / " + this.m_CarryWeightMax : "");
       }
       
       public function UpdateTooltips() : void
@@ -316,3 +315,4 @@ package
       }
    }
 }
+

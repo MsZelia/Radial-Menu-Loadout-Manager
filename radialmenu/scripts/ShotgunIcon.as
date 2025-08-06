@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol37")]
    public dynamic class ShotgunIcon extends MovieClip
    {
-       
       
       public function ShotgunIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

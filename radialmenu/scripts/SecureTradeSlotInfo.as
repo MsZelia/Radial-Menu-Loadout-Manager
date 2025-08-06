@@ -17,7 +17,6 @@ package
       private static const FRAME_NO_ICON:* = 1;
       
       private static const FRAME_ICON:* = 2;
-       
       
       public var Header_mc:MovieClip;
       
@@ -116,7 +115,8 @@ package
          _loc3_ = 0;
          while(_loc3_ < this.m_SlotClips.length)
          {
-            if(_loc7_ = this.m_SlotClips[_loc3_] as MovieClip)
+            _loc7_ = this.m_SlotClips[_loc3_] as MovieClip;
+            if(_loc7_)
             {
                _loc8_ = _loc7_.Text_tf;
                _loc7_.visible = _loc3_ < _loc2_.length;
@@ -126,12 +126,17 @@ package
                   if(_loc1_.slotType == 0)
                   {
                      GlobalFunc.SetText(_loc8_,"$SecureTrade_ItemSlotCounts");
-                     _loc9_ = (_loc9_ = (_loc9_ = _loc8_.text).replace("{1}",_loc1_.slotCountFilled)).replace("{2}",_loc1_.slotCountMax);
+                     _loc9_ = _loc8_.text;
+                     _loc9_ = _loc9_.replace("{1}",_loc1_.slotCountFilled);
+                     _loc9_ = _loc9_.replace("{2}",_loc1_.slotCountMax);
                   }
                   else
                   {
                      GlobalFunc.SetText(_loc8_,"$SecureTrade_ItemSlotTypeAndCounts");
-                     _loc9_ = (_loc9_ = (_loc9_ = (_loc9_ = _loc8_.text).replace("{1}",_loc1_.slotTypeText)).replace("{2}",_loc1_.slotCountFilled)).replace("{3}",_loc1_.slotCountMax);
+                     _loc9_ = _loc8_.text;
+                     _loc9_ = _loc9_.replace("{1}",_loc1_.slotTypeText);
+                     _loc9_ = _loc9_.replace("{2}",_loc1_.slotCountFilled);
+                     _loc9_ = _loc9_.replace("{3}",_loc1_.slotCountMax);
                   }
                   GlobalFunc.SetText(_loc8_,_loc9_);
                }
@@ -210,3 +215,4 @@ package
       }
    }
 }
+

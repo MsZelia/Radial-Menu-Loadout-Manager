@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol453")]
    public class RadialActiveEffectEntry extends MovieClip
    {
-       
       
       public var Icon_mc:MovieClip;
       
@@ -23,3 +22,4 @@ package
       }
    }
 }
+

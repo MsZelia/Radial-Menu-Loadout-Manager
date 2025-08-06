@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol149")]
    public dynamic class LaserMusketIcon extends MovieClip
    {
-       
       
       public function LaserMusketIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

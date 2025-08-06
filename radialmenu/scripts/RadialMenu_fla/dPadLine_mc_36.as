@@ -5,7 +5,6 @@ package RadialMenu_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol646")]
    public dynamic class dPadLine_mc_36 extends MovieClip
    {
-       
       
       public function dPadLine_mc_36()
       {
@@ -24,3 +23,4 @@ package RadialMenu_fla
       }
    }
 }
+

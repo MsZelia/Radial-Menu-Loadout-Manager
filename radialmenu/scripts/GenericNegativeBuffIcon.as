@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol170")]
    public dynamic class GenericNegativeBuffIcon extends MovieClip
    {
-       
       
       public function GenericNegativeBuffIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+

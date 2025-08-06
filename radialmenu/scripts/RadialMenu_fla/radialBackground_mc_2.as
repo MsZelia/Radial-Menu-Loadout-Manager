@@ -5,7 +5,6 @@ package RadialMenu_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol515")]
    public dynamic class radialBackground_mc_2 extends MovieClip
    {
-       
       
       public function radialBackground_mc_2()
       {
@@ -29,3 +28,4 @@ package RadialMenu_fla
       }
    }
 }
+

@@ -5,7 +5,6 @@ package RadialMenu_fla
    [Embed(source="/_assets/assets.swf", symbol="symbol450")]
    public dynamic class HotkeyIcons_White_49 extends MovieClip
    {
-       
       
       public function HotkeyIcons_White_49()
       {
@@ -19,3 +18,4 @@ package RadialMenu_fla
       }
    }
 }
+

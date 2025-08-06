@@ -54,7 +54,6 @@ package
       private static const FILTER_FOODWATER:* = 1 << 5;
       
       private static const FILTER_AID:* = 1 << 6;
-       
       
       public var ButtonHintBar_mc:BSButtonHintBar;
       
@@ -74,7 +73,7 @@ package
       
       public var PlayerInventory_mc:SecureTradePlayerInventory;
       
-      private var m_SelectedList:SecureTradeInventory;
+      private var m_SelectedList:SecureTradeInventory = this.PlayerInventory_mc;
       
       private var m_TabMax:* = 0;
       
@@ -86,19 +85,19 @@ package
       
       private var m_PlayerInventoryEmpty:Boolean = false;
       
-      protected var ButtonHintMouseScrollNavigate:BSButtonHintData;
+      protected var ButtonHintMouseScrollNavigate:BSButtonHintData = new BSButtonHintData("$SCROLL","Mousewheel","","",1,null);
       
-      protected var ButtonHintNavigate:BSButtonHintData;
+      protected var ButtonHintNavigate:BSButtonHintData = new BSButtonHintData("$SELECT","Space","PSN_RS","Xenon_RS",1,null);
       
-      protected var ButtonHintSay:BSButtonHintData;
+      protected var ButtonHintSay:BSButtonHintData = new BSButtonHintData("$SAY","Space","PSN_A","Xenon_A",1,null);
       
-      protected var ButtonHintExpand:BSButtonHintData;
+      protected var ButtonHintExpand:BSButtonHintData = new BSButtonHintData("$EXPAND","Q","PSN_R1","Xenon_R1",1,null);
       
       protected var ButtonHintSurvivalTent:BSButtonHintData;
       
       protected var ButtonHintSlotItem:BSButtonHintData;
       
-      protected var ButtonHintInspectItem:BSButtonHintData;
+      protected var ButtonHintInspectItem:BSButtonHintData = new BSButtonHintData("$INSPECT","X","PSN_R3","Xenon_R3",1,null);
       
       public var SelectedImage_mc:SWFLoaderClip;
       
@@ -128,31 +127,23 @@ package
       
       private var m_QuickCampPlaceCost:uint = 0;
       
-      private var m_ThumbstickSpamTimer:Timer;
+      private var m_ThumbstickSpamTimer:Timer = new Timer(125,-1);
       
       private var m_ThumbstickSpamDisable:Boolean = false;
       
       private var m_LastCenterInfo:* = null;
       
-      private var testStateData:Object;
+      private var testStateData:Object = {
+         "innerSelectedIndex":-1,
+         "outerSelectedIndex":-1,
+         "innerExpanded":false,
+         "menuIndex":-1
+      };
       
       public function RadialMenu()
       {
-         this.m_SelectedList = this.PlayerInventory_mc;
-         this.ButtonHintMouseScrollNavigate = new BSButtonHintData("$SCROLL","Mousewheel","","",1,null);
-         this.ButtonHintNavigate = new BSButtonHintData("$SELECT","Space","PSN_RS","Xenon_RS",1,null);
-         this.ButtonHintSay = new BSButtonHintData("$SAY","Space","PSN_A","Xenon_A",1,null);
-         this.ButtonHintExpand = new BSButtonHintData("$EXPAND","Q","PSN_R1","Xenon_R1",1,null);
          this.ButtonHintSurvivalTent = new BSButtonHintData("$SURVIVALTENTZEUS","T","PSN_Y","Xenon_Y",1,this.onPlaceQuickCamp);
          this.ButtonHintSlotItem = new BSButtonHintData("$CHANGE","C","PSN_R1","Xenon_R1",1,this.onSlotItem);
-         this.ButtonHintInspectItem = new BSButtonHintData("$INSPECT","X","PSN_R3","Xenon_R3",1,null);
-         this.m_ThumbstickSpamTimer = new Timer(125,-1);
-         this.testStateData = {
-            "innerSelectedIndex":-1,
-            "outerSelectedIndex":-1,
-            "innerExpanded":false,
-            "menuIndex":-1
-         };
          super();
          addFrameScript(0,this.frame1,1,this.frame2);
          StyleSheet.apply(this.PlayerInventory_mc.ItemList_mc,false,Radial_RadialInventoryListStyle);
@@ -227,7 +218,7 @@ package
          }
          if(this.selectedMenuIndex == DPAD_STATE_DOWN)
          {
-            _loc1_ = !!this.InnerRing.selectedEntry ? Boolean(this.InnerRing.selectedEntry.data.expandable) : false;
+            _loc1_ = this.InnerRing.selectedEntry ? Boolean(this.InnerRing.selectedEntry.data.expandable) : false;
             this.ButtonHintSay.ButtonText = "$SAY";
             this.ButtonHintExpand.ButtonVisible = true;
             this.ButtonHintExpand.ButtonEnabled = _loc1_;
@@ -693,7 +684,8 @@ package
             _loc3_ = new Array();
             _loc4_ = null;
             _loc5_ = 0;
-            if((_loc4_ = BSUIDataManager.GetDataFromClient("PlayerInventoryData").data) != null && _loc4_.InventoryList != null)
+            _loc4_ = BSUIDataManager.GetDataFromClient("PlayerInventoryData").data;
+            if(_loc4_ != null && _loc4_.InventoryList != null)
             {
                this.PlayerInventory_mc.ItemList_mc.List_mc.filterer.itemFilter = FILTER_WEAPONS + FILTER_ARMOR + FILTER_APPAREL + FILTER_AID + FILTER_FOODWATER;
                this.PlayerInventory_mc.ItemList_mc.List_mc.MenuListData = this.ClearAndSortListData(_loc4_.InventoryList.concat());
@@ -897,7 +889,8 @@ package
                this.processStateUpdate(this.testStateData);
                break;
             case 117:
-               _loc4_ = (_loc4_ = int(this.testStateData.innerSelectedIndex)) + _loc2_;
+               _loc4_ = int(this.testStateData.innerSelectedIndex);
+               _loc4_ = _loc4_ + _loc2_;
                _loc4_ = Math.max(-1,Math.min(_loc4_,11));
                this.testStateData.innerSelectedIndex = _loc4_;
                this.processStateUpdate(this.testStateData);
@@ -907,7 +900,8 @@ package
                this.processStateUpdate(this.testStateData);
                break;
             case 119:
-               _loc5_ = (_loc5_ = int(this.testStateData.outerSelectedIndex)) + _loc2_;
+               _loc5_ = int(this.testStateData.outerSelectedIndex);
+               _loc5_ = _loc5_ + _loc2_;
                _loc5_ = Math.max(-1,Math.min(_loc5_,15));
                this.testStateData.outerSelectedIndex = _loc5_;
                this.processStateUpdate(this.testStateData);
@@ -940,3 +934,4 @@ package
       }
    }
 }
+

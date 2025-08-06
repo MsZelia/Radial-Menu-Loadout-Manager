@@ -36,7 +36,6 @@ package
       private static const EVENT_SCRAPBOX_SCRAP_TRANSFER_CONFIRM:* = "Container::transferSelectionToScrapConfirm";
       
       public static const EVENT_CLOSED:String = "SecureTradeScrapConfirmModal::EVENT_CLOSED";
-       
       
       private var m_State:uint = 0;
       
@@ -193,3 +192,4 @@ package
       }
    }
 }
+

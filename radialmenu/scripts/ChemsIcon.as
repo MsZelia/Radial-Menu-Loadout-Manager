@@ -5,7 +5,6 @@ package
    [Embed(source="/_assets/assets.swf", symbol="symbol233")]
    public dynamic class ChemsIcon extends MovieClip
    {
-       
       
       public function ChemsIcon()
       {
@@ -13,3 +12,4 @@ package
       }
    }
 }
+
