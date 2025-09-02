@@ -29,7 +29,7 @@ package
       
       private static const MOD_NAME:String = "RadialMenuLoadoutManager";
       
-      private static const MOD_VERSION:String = "1.0.5";
+      private static const MOD_VERSION:String = "1.0.6";
       
       private static const FULL_MOD_NAME:String = "[" + MOD_NAME + " " + MOD_VERSION + "]";
       
@@ -597,7 +597,7 @@ package
                   {
                      displayError("Gamepad: Prev loadout");
                   }
-                  selectedLoadoutId--;
+                  --selectedLoadoutId;
                   listLoadouts(true);
                }
                else if(param1 == "Right")
@@ -606,7 +606,7 @@ package
                   {
                      displayError("Gamepad: Next loadout");
                   }
-                  selectedLoadoutId++;
+                  ++selectedLoadoutId;
                   listLoadouts(true);
                }
             }

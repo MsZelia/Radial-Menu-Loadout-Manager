@@ -890,7 +890,7 @@ package
                break;
             case 117:
                _loc4_ = int(this.testStateData.innerSelectedIndex);
-               _loc4_ = _loc4_ + _loc2_;
+               _loc4_ += _loc2_;
                _loc4_ = Math.max(-1,Math.min(_loc4_,11));
                this.testStateData.innerSelectedIndex = _loc4_;
                this.processStateUpdate(this.testStateData);
@@ -901,7 +901,7 @@ package
                break;
             case 119:
                _loc5_ = int(this.testStateData.outerSelectedIndex);
-               _loc5_ = _loc5_ + _loc2_;
+               _loc5_ += _loc2_;
                _loc5_ = Math.max(-1,Math.min(_loc5_,15));
                this.testStateData.outerSelectedIndex = _loc5_;
                this.processStateUpdate(this.testStateData);
