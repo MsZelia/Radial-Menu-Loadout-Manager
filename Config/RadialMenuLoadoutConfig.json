@@ -1,0 +1,80 @@
+{
+	"debug": false,
+	
+	"x": -500,
+	"y": -200,
+	"textSize": 20,
+	"textFont": "$MAIN_Font_Bold",
+	"textAlign": "left",
+	
+	"colorEquipped": "0x4ed520",
+	"colorUnequipped": "0xffffff",
+	"formatEquipped": "[E]\t{key}) {name}",
+	"formatUnequipped": "\t{key}) {name}",
+	
+	"formatGamepadButtonInfo": "\n Left/Right) Select loadout\n Start) Equip: {selectedLoadout}",
+	
+	"loadouts": [
+		{
+			"enabled": false,
+			"hotkey": 0,
+			"name": "Test loadout",
+			"account": ["acc 1", "acc 2", "..."],
+			"character": ["char 1", "char 2", "..."],
+			"matchMode": "CONTAINS",
+			"1": "item 1",
+			"2": "item 2",
+			"3": ["item 3", "item 3 alt", "item 3 alt 2", "etc..."],
+			"4": ["item 4", "item 4 alt"],
+			"5": "item 5",
+			"6": "item 6",
+			"7": "item 7",
+			"8": "item 8",
+			"9": "item 9",
+			"10": "item 10",
+			"11": "item 11",
+			"12": "item 12"
+		},
+		{
+			"enabled": true,
+			"hotkey": 112, //F1
+			"name": "Utility buffs",
+			"1": "canned coffee",
+			"7": "company tea",
+			"8": "berry mentats",
+			"9": ["psychobuff", "bufftats", "buffout"],
+			"10": "vintage mire magic moonshine",
+			"11": "rad ant lager",
+			"12": "radaway: diluted"
+		},
+		{
+			"enabled": true,
+			"hotkey": 113, //F2
+			"name": "DMG buffs",
+			"7": "ballistic bock",
+			"8": "high voltage hefe",
+			"9": "overdrive",
+			"10": "psychobuff",
+			"11": "fury"
+		},
+		{
+			"enabled": true,
+			"hotkey": 116, //F5
+			"name": "Tesla",
+			"5": "*tcn",
+			"6": "Tesla"
+		},
+		{
+			"enabled": true,
+			"hotkey": 117, //F6
+			"name": "+3 Cha",
+			"11": "+cha"
+		},
+		{
+			"enabled": true,
+			"hotkey": 118, //F7
+			"name": "Camera",
+			"11": "**cam"
+		}
+	]
+}
