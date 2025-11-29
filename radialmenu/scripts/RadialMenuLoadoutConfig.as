@@ -29,7 +29,7 @@ package
       
       private static const MOD_NAME:String = "RadialMenuLoadoutManager";
       
-      private static const MOD_VERSION:String = "1.0.7";
+      private static const MOD_VERSION:String = "1.0.8";
       
       private static const FULL_MOD_NAME:String = "[" + MOD_NAME + " " + MOD_VERSION + "]";
       
@@ -254,7 +254,7 @@ package
                if(loadout != null)
                {
                   data.loadouts[i].enabled = data.loadouts[i].enabled != null ? Boolean(data.loadouts[i].enabled) : true;
-                  data.loadouts[i].hotkey = data.loadouts[i].hotkey != null && !isNaN(data.loadouts[i].hotkey) ? Number(data.loadouts[i].hotkey) : 0;
+                  data.loadouts[i].hotkey = Buttons.parseValue(data.loadouts[i].hotkey);
                   data.loadouts[i].name = data.loadouts[i].name == null ? "Loadout " + i : data.loadouts[i].name;
                   data.loadouts[i].account = data.loadouts[i].account == null ? [] : [].concat(data.loadouts[i].account);
                   data.loadouts[i].character = data.loadouts[i].character == null ? [] : [].concat(data.loadouts[i].character);
@@ -441,7 +441,7 @@ package
                      if(isEquippedLoadout(config.loadouts[i]))
                      {
                         errorCode = "display loadout EQ";
-                        displayLoadout(" " + config.formatEquipped.replace("{name}",config.loadouts[i].name).replace("{key}",getButtonKey(config.loadouts[i].hotkey)));
+                        displayLoadout(" " + config.formatEquipped.replace("{name}",config.loadouts[i].name).replace("{key}",Buttons.getButtonKey(config.loadouts[i].hotkey)));
                         if(formatEquipped != null)
                         {
                            applyFormats.push({
@@ -454,7 +454,7 @@ package
                      else
                      {
                         errorCode = "display loadout notEQ";
-                        displayLoadout(" " + config.formatUnequipped.replace("{name}",config.loadouts[i].name).replace("{key}",getButtonKey(config.loadouts[i].hotkey)));
+                        displayLoadout(" " + config.formatUnequipped.replace("{name}",config.loadouts[i].name).replace("{key}",Buttons.getButtonKey(config.loadouts[i].hotkey)));
                         if(formatUnequipped != null)
                         {
                            applyFormats.push({
@@ -751,111 +751,6 @@ package
             i++;
          }
          return matches;
-      }
-      
-      public static function getButtonKey(keyCode:uint) : String
-      {
-         switch(keyCode)
-         {
-            case 9:
-               return "Tab";
-            case 13:
-               return "Enter";
-            case 16:
-               return "Shift";
-            case 17:
-               return "Ctrl";
-            case 18:
-               return "Alt";
-            case 19:
-               return "Pause";
-            case 20:
-               return "CapLk";
-            case 27:
-               return "Esc";
-            case 33:
-               return "PgUp";
-            case 34:
-               return "PgDn";
-            case 35:
-               return "End";
-            case 36:
-               return "Home";
-            case 37:
-               return "Left";
-            case 38:
-               return "Up";
-            case 39:
-               return "Right";
-            case 40:
-               return "Down";
-            case 45:
-               return "Ins";
-            case 46:
-               return "Del";
-            case 93:
-               return "Sel";
-            case 96:
-               return "N0";
-            case 97:
-               return "N1";
-            case 98:
-               return "N2";
-            case 99:
-               return "N3";
-            case 100:
-               return "N4";
-            case 101:
-               return "N5";
-            case 102:
-               return "N6";
-            case 103:
-               return "N7";
-            case 104:
-               return "N8";
-            case 105:
-               return "N9";
-            case 106:
-               return "N*";
-            case 107:
-               return "N+";
-            case 109:
-               return "N-";
-            case 110:
-               return "N.";
-            case 111:
-               return "N/";
-            case 112:
-               return "F1";
-            case 113:
-               return "F2";
-            case 114:
-               return "F3";
-            case 115:
-               return "F4";
-            case 116:
-               return "F5";
-            case 117:
-               return "F6";
-            case 118:
-               return "F7";
-            case 119:
-               return "F8";
-            case 120:
-               return "F9";
-            case 121:
-               return "F10";
-            case 122:
-               return "F11";
-            case 123:
-               return "F12";
-            case 144:
-               return "NumLk";
-            case 145:
-               return "ScrLk";
-            default:
-               return String.fromCharCode(keyCode);
-         }
       }
    }
 }
