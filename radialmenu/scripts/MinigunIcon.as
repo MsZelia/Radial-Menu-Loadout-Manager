@@ -2,7 +2,7 @@ package
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol108")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol110")]
    public dynamic class MinigunIcon extends MovieClip
    {
       

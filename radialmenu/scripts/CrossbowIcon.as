@@ -2,7 +2,7 @@ package
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol227")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol229")]
    public dynamic class CrossbowIcon extends MovieClip
    {
       

@@ -2,7 +2,7 @@ package
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol102")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol104")]
    public dynamic class MolotovIcon extends MovieClip
    {
       

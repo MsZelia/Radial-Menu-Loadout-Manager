@@ -37,7 +37,7 @@
 		},
 		{
 			"enabled": true,
-			"hotkey": 112, //F1
+			"hotkey": "F1",
 			"name": "Utility buffs",
 			"1": "canned coffee",
 			"7": "company tea",
@@ -49,7 +49,7 @@
 		},
 		{
 			"enabled": true,
-			"hotkey": 113, //F2
+			"hotkey": "F2",
 			"name": "DMG buffs",
 			"7": "ballistic bock",
 			"8": "high voltage hefe",
@@ -59,20 +59,20 @@
 		},
 		{
 			"enabled": true,
-			"hotkey": 116, //F5
+			"hotkey": "F5",
 			"name": "Tesla",
 			"5": "*tcn",
 			"6": "Tesla"
 		},
 		{
 			"enabled": true,
-			"hotkey": 117, //F6
+			"hotkey": "F6",
 			"name": "+3 Cha",
 			"11": "+cha"
 		},
 		{
 			"enabled": true,
-			"hotkey": 118, //F7
+			"hotkey": "F7",
 			"name": "Camera",
 			"11": "**cam"
 		}

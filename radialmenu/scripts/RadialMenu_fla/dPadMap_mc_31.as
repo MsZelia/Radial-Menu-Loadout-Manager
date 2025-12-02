@@ -3,7 +3,7 @@ package RadialMenu_fla
    import flash.display.MovieClip;
    import flash.text.TextField;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol640")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol644")]
    public dynamic class dPadMap_mc_31 extends MovieClip
    {
       

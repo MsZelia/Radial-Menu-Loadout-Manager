@@ -2,7 +2,7 @@ package
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol284")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol286")]
    public dynamic class Chainsaw_76Icon extends MovieClip
    {
       

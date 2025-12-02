@@ -6,7 +6,7 @@ package
    import flash.display.MovieClip;
    import flash.text.TextField;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol460")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol464")]
    public class RadialActiveEffects extends IMenu
    {
       

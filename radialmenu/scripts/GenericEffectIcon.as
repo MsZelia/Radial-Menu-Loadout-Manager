@@ -2,7 +2,7 @@ package
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol173")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol175")]
    public dynamic class GenericEffectIcon extends MovieClip
    {
       

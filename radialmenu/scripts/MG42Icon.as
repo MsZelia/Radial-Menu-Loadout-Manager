@@ -2,7 +2,7 @@ package
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol114")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol116")]
    public dynamic class MG42Icon extends MovieClip
    {
       

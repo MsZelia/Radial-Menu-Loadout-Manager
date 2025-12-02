@@ -2,7 +2,7 @@ package RadialMenu_fla
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol450")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol454")]
    public dynamic class HotkeyIcons_White_49 extends MovieClip
    {
       

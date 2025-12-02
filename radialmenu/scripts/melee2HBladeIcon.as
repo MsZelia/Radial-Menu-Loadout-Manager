@@ -2,7 +2,7 @@ package
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol123")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol125")]
    public dynamic class melee2HBladeIcon extends MovieClip
    {
       

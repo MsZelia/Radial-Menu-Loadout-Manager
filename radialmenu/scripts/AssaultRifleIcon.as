@@ -2,7 +2,7 @@ package
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol266")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol268")]
    public dynamic class AssaultRifleIcon extends MovieClip
    {
       

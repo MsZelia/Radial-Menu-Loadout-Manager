@@ -71,6 +71,8 @@ package Shared
       
       public static const FISHING_MODE:String = "Fishing";
       
+      public static const EXAMINE_CONFIRM_MODE:String = "ExamineConfirmMode";
+      
       public function HUDModes()
       {
          super();

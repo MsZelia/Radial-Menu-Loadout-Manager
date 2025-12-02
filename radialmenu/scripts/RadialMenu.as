@@ -12,8 +12,10 @@ package
    import Shared.AS3.StyleSheet;
    import Shared.AS3.Styles.Radial_RadialInventoryListStyle;
    import Shared.GlobalFunc;
+   import Shared.ResolutionDarkeners;
    import flash.display.InteractiveObject;
    import flash.display.MovieClip;
+   import flash.display.Shape;
    import flash.events.Event;
    import flash.events.FocusEvent;
    import flash.events.KeyboardEvent;
@@ -23,7 +25,7 @@ package
    import flash.utils.Timer;
    import scaleform.gfx.*;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol656")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol662")]
    public class RadialMenu extends IMenu
    {
       
@@ -535,20 +537,27 @@ package
          BSUIDataManager.Subscribe("RadialMenuExpandMeterData",this.onMeterFillUpdate);
          BSUIDataManager.Subscribe("PlayerInventoryData",this.onPlayerInventoryDataUpdate);
          BSUIDataManager.Subscribe("CharacterInfoData",this.onCharacterInfoDataUpdate);
-         BSUIDataManager.Subscribe("ScreenResolutionData",this.onResolutionUpdate);
          BSUIDataManager.Subscribe("AccountInfoData",this.onAccountInfoUpdate);
+         BSUIDataManager.Subscribe("ScreenResolutionData",this.onScreenResolutionData);
          this.updateSelfInventory();
+      }
+      
+      private function onScreenResolutionData(param1:FromClientDataEvent) : void
+      {
+         var _loc2_:Shape = null;
+         if(param1.data)
+         {
+            _loc2_ = ResolutionDarkeners.CreateDarkener(param1.data.ScreenWidth,param1.data.ScreenHeight,ResolutionDarkeners.DARKENER_TYPE_SOLID,0.3);
+            addChildAt(_loc2_,0);
+            ResolutionDarkeners.PositionDarkener(_loc2_);
+            this.radialTab.gotoAndStop(param1.data.AspectRatio);
+         }
       }
       
       private function onAccountInfoUpdate(param1:FromClientDataEvent) : void
       {
          this.m_HasZeus = param1.data.hasZeus;
          this.updateButtonBar();
-      }
-      
-      private function onResolutionUpdate(param1:FromClientDataEvent) : *
-      {
-         this.radialTab.gotoAndStop(param1.data.AspectRatio);
       }
       
       private function onListMouseOver(param1:Event) : *

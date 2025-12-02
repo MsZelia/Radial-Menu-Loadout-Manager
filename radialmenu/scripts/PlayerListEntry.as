@@ -10,7 +10,7 @@ package
    import flash.text.TextField;
    import scaleform.gfx.TextFieldEx;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol299")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol301")]
    public class PlayerListEntry extends ItemListEntry
    {
       
