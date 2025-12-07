@@ -29,7 +29,7 @@ package
       
       private static const MOD_NAME:String = "RadialMenuLoadoutManager";
       
-      private static const MOD_VERSION:String = "1.0.8";
+      private static const MOD_VERSION:String = "1.0.9";
       
       private static const FULL_MOD_NAME:String = "[" + MOD_NAME + " " + MOD_VERSION + "]";
       
@@ -118,8 +118,8 @@ package
       private static function createTextField() : TextField
       {
          var tf:TextField = new TextField();
-         tf.x = -940;
-         tf.y = -540;
+         tf.x = 0;
+         tf.y = 0;
          tf.width = 800;
          tf.height = 800;
          tf.wordWrap = true;
@@ -273,8 +273,8 @@ package
                i++;
             }
          }
-         loadouts_tf.x = data.x != null && !isNaN(data.x) ? data.x : -500;
-         loadouts_tf.y = data.y != null && !isNaN(data.y) ? data.y : -200;
+         loadouts_tf.x = data.x != null && !isNaN(data.x) && !data.x >= 0 ? data.x : 500;
+         loadouts_tf.y = data.y != null && !isNaN(data.y) && !data.y >= 0 ? data.y : 200;
          var font:TextFormat = loadouts_tf.getTextFormat();
          font.size = data.textSize != null && !isNaN(data.textSize) ? data.textSize : 20;
          font.align = data.textAlign != null && data.textAlign is String ? data.textAlign.toLowerCase() : "left";
