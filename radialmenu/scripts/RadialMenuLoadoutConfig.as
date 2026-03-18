@@ -29,7 +29,7 @@ package
       
       private static const MOD_NAME:String = "RadialMenuLoadoutManager";
       
-      private static const MOD_VERSION:String = "1.1.0";
+      private static const MOD_VERSION:String = "1.1.1";
       
       private static const FULL_MOD_NAME:String = "[" + MOD_NAME + " " + MOD_VERSION + "]";
       
