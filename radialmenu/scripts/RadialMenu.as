@@ -47,6 +47,8 @@ package
       
       private static const FILTER_NEW_FAVE:* = 3;
       
+      private static const FILTER_NEW_WEAPONS:* = 6;
+      
       private static const FILTER_WEAPONS:* = 1 << 2;
       
       private static const FILTER_ARMOR:* = 1 << 3;
@@ -611,7 +613,7 @@ package
             while(index < aListData.length)
             {
                item = aListData[index];
-               if(Boolean(item.canFavorite) && (item.filterFlag == FILTER_WEAPONS || item.filterFlag == FILTER_NEW_FAVE || item.filterFlag == FILTER_ARMOR || item.filterFlag == FILTER_APPAREL || item.filterFlag == FILTER_AID || item.filterFlag == FILTER_FOODWATER))
+               if(Boolean(item.canFavorite) && (item.filterFlag == FILTER_WEAPONS || item.filterFlag == FILTER_NEW_WEAPONS || item.filterFlag == FILTER_NEW_FAVE || item.filterFlag == FILTER_ARMOR || item.filterFlag == FILTER_APPAREL || item.filterFlag == FILTER_AID || item.filterFlag == FILTER_FOODWATER))
                {
                   newArray.push(item);
                }
@@ -621,7 +623,7 @@ package
             {
                var _loc3_:int = 0;
                var _loc4_:int = 10;
-               if(param1.filterFlag == FILTER_WEAPONS || param1.filterFlag == FILTER_NEW_FAVE)
+               if(param1.filterFlag == FILTER_WEAPONS || param1.filterFlag == FILTER_NEW_FAVE || param1.filterFlag == FILTER_NEW_WEAPONS)
                {
                   _loc4_ = 1;
                }
@@ -634,7 +636,7 @@ package
                   _loc4_ = 3;
                }
                var _loc5_:int = 10;
-               if(param2.filterFlag == FILTER_WEAPONS || param2.filterFlag == FILTER_NEW_FAVE)
+               if(param2.filterFlag == FILTER_WEAPONS || param2.filterFlag == FILTER_NEW_FAVE || param2.filterFlag == FILTER_NEW_WEAPONS)
                {
                   _loc5_ = 1;
                }
