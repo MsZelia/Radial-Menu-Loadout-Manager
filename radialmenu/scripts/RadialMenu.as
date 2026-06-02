@@ -25,7 +25,7 @@ package
    import flash.utils.Timer;
    import scaleform.gfx.*;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol662")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol664")]
    public class RadialMenu extends IMenu
    {
       

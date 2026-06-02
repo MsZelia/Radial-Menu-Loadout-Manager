@@ -2,7 +2,7 @@ package RadialMenu_fla
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol650")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol652")]
    public dynamic class dPadLine_mc_36 extends MovieClip
    {
       

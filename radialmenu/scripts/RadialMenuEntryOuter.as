@@ -1,6 +1,6 @@
 package
 {
-   [Embed(source="/_assets/assets.swf", symbol="symbol512")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol514")]
    public class RadialMenuEntryOuter extends RadialMenuEntry
    {
       

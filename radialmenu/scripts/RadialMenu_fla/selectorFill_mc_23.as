@@ -2,7 +2,7 @@ package RadialMenu_fla
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol477")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol479")]
    public dynamic class selectorFill_mc_23 extends MovieClip
    {
       
