@@ -2404,18 +2404,18 @@ package
       private function calcMaxQuantity(param1:Boolean = false) : uint
       {
          var _loc7_:int = 0;
-         var _loc2_:Number = Number(this.selectedListEntry.offerValue);
+         var _loc2_:Number = Number(this.ItemCardContainer_mc.ItemCard_mc.getChildAt(0).Value_tf.text);
          var _loc3_:Number = Number(this.OfferInventory_mc.OfferCurrency_tf.text);
          var _loc4_:Number = Number(this.PlayerInventory_mc.PlayerCurrency_tf.text);
          var _loc5_:Number = this.selectedList == this.PlayerInventory_mc ? _loc3_ : _loc4_;
          var _loc6_:Number = this.selectedListEntry ? Number(this.selectedListEntry.count) : 1;
          if(param1)
          {
-            if(!this.m_OwnsVendor && this.m_MenuMode == MODE_PLAYERVENDING && Boolean(this.selectedListEntry.isOffered))
+            if(!this.m_OwnsVendor && (this.m_MenuMode == MODE_VENDING_MACHINE || this.m_MenuMode == MODE_PLAYERVENDING) && Boolean(this.selectedListEntry.isOffered))
             {
                _loc6_ = Math.min(this.selectedListEntry.count,Math.floor(_loc5_ / this.selectedListEntry.offerValue));
             }
-            else if(!this.m_OwnsVendor && (this.m_MenuMode == MODE_NPCVENDING || this.m_MenuMode == MODE_VENDING_MACHINE))
+            else if(!this.m_OwnsVendor && this.m_MenuMode == MODE_NPCVENDING)
             {
                if(isNaN(_loc2_))
                {
@@ -2425,7 +2425,7 @@ package
                   {
                      if(this.ItemCardContainer_mc.ItemCard_mc.InfoObj[_loc7_].text == "$val")
                      {
-                        _loc2_ = Number(this.ItemCardContainer_mc.ItemCard_mc.InfoObj[_loc7_].offerValue);
+                        _loc2_ = Number(this.ItemCardContainer_mc.ItemCard_mc.InfoObj[_loc7_].value);
                         break;
                      }
                      _loc7_++;
