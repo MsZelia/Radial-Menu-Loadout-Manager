@@ -214,7 +214,7 @@ package
                   radialMenu.onSlotItemCancel();
                   if(DEBUG)
                   {
-                     displayError(FULL_MOD_NAME + " | Config file loaded!");
+                     displayError(FULL_MOD_NAME + " Config file loaded!");
                   }
                   errorCode = "listLoadouts";
                   listLoadouts();
@@ -222,17 +222,17 @@ package
                catch(e:JSONParseError)
                {
                   line = e.text.substr(0,e.location).match(/\n/g).length + 1;
-                  displayError(FULL_MOD_NAME + " | Error parsing config: " + e.message + " in line " + line);
+                  displayError(FULL_MOD_NAME + " Error parsing config: " + e.message + " in line " + line);
                }
                catch(e:Error)
                {
-                  displayError(FULL_MOD_NAME + " | Error initializing config (" + errorCode + "): " + e);
+                  displayError(FULL_MOD_NAME + " Error initializing config (" + errorCode + "): " + e);
                }
                loader.removeEventListener(Event.COMPLETE,loaderComplete);
             };
             ioErrorHandler = function(e:IOErrorEvent):void
             {
-               displayError(FULL_MOD_NAME + " | Error loading config: " + e.text);
+               displayError(FULL_MOD_NAME + " Error loading config: " + e.text);
             };
             url = new URLRequest(FILE_NAME);
             loader = new URLLoader();
@@ -242,7 +242,7 @@ package
          }
          catch(e:*)
          {
-            displayError(FULL_MOD_NAME + " | Error loading config! " + e);
+            displayError(FULL_MOD_NAME + " Error loading config! " + e);
          }
       }
       
