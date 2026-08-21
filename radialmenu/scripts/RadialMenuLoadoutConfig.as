@@ -29,7 +29,7 @@ package
       
       private static const MOD_NAME:String = "RadialMenuLoadoutManager";
       
-      private static const MOD_VERSION:String = "1.1.4";
+      private static const MOD_VERSION:String = "1.1.5";
       
       private static const FULL_MOD_NAME:String = "[" + MOD_NAME + " " + MOD_VERSION + "]";
       
@@ -42,6 +42,8 @@ package
       public static var DEBUG_SELECTION:Boolean = false;
       
       public static var DEBUG_EVENTS:Boolean = false;
+      
+      public static var DEBUG_KEYS:Boolean = false;
       
       private static var radialMenu:* = null;
       
@@ -239,6 +241,7 @@ package
             data = {};
          }
          DEBUG = data.debug;
+         DEBUG_KEYS = data.debugKeys;
          DEBUG_SELECTION = data.debugSelection;
          DEBUG_EVENTS = data.debugUserEvents;
          if(data.loadouts == null)
@@ -473,7 +476,7 @@ package
                i++;
             }
             errorCode = "controller keybinds";
-            if(radialMenu.uiPlatform != PlatformChangeEvent.PLATFORM_PC_KB_MOUSE)
+            if(radialMenu.uiPlatform != PlatformChangeEvent.PLATFORM_PC_KB_MOUSE || DEBUG_KEYS)
             {
                if(selectedLoadoutId < 0)
                {
@@ -622,6 +625,19 @@ package
          var radialExpandedList:*;
          try
          {
+            if(DEBUG_KEYS)
+            {
+               if(event.keyCode == 37)
+               {
+                  --selectedLoadoutId;
+                  listLoadouts(true);
+               }
+               else if(event.keyCode == 39)
+               {
+                  --selectedLoadoutId;
+                  listLoadouts(true);
+               }
+            }
             errorCode = "keyUp";
             if(DEBUG)
             {
