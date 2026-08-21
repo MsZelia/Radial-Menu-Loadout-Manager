@@ -191,6 +191,7 @@ package
       
       private static function loadConfig() : void
       {
+         var ioErrorHandler:Function = null;
          var loaderComplete:Function = null;
          var url:URLRequest = null;
          var loader:URLLoader = null;
@@ -199,11 +200,12 @@ package
             loaderComplete = function(param1:Event):void
             {
                var json:Object;
+               var line:uint;
                errorCode = "loaderComplete";
                try
                {
                   errorCode = "JSONDecoder";
-                  json = new JSONDecoder(loader.data,true).getValue();
+                  json = new JSONDecoder(loader.data,false).getValue();
                   errorCode = "initializeConfig";
                   initializeConfig(json);
                   errorCode = "onShowInventory";
@@ -212,25 +214,35 @@ package
                   radialMenu.onSlotItemCancel();
                   if(DEBUG)
                   {
-                     displayError("Config file loaded!");
+                     displayError(FULL_MOD_NAME + " | Config file loaded!");
                   }
                   errorCode = "listLoadouts";
                   listLoadouts();
                }
-               catch(e:*)
+               catch(e:JSONParseError)
                {
-                  displayError(FULL_MOD_NAME + " Error initializing config! " + errorCode + ": " + e);
+                  line = e.text.substr(0,e.location).match(/\n/g).length + 1;
+                  displayError(FULL_MOD_NAME + " | Error parsing config: " + e.message + " in line " + line);
+               }
+               catch(e:Error)
+               {
+                  displayError(FULL_MOD_NAME + " | Error initializing config (" + errorCode + "): " + e);
                }
                loader.removeEventListener(Event.COMPLETE,loaderComplete);
+            };
+            ioErrorHandler = function(e:IOErrorEvent):void
+            {
+               displayError(FULL_MOD_NAME + " | Error loading config: " + e.text);
             };
             url = new URLRequest(FILE_NAME);
             loader = new URLLoader();
             loader.load(url);
+            loader.addEventListener(IOErrorEvent.IO_ERROR,ioErrorHandler);
             loader.addEventListener(Event.COMPLETE,loaderComplete);
          }
          catch(e:*)
          {
-            displayError(FULL_MOD_NAME + " Error loading config! " + e);
+            displayError(FULL_MOD_NAME + " | Error loading config! " + e);
          }
       }
       
