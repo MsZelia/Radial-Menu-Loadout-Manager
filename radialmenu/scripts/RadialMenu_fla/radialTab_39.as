@@ -3,13 +3,15 @@ package RadialMenu_fla
    import flash.display.MovieClip;
    import flash.text.TextField;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol646")]
-   public dynamic class dPadMap_mc_31 extends MovieClip
+   [Embed(source="/_assets/assets.swf", symbol="symbol666")]
+   public dynamic class radialTab_39 extends MovieClip
    {
       
-      public var labelUp_tf:TextField;
+      public var ModeBlade_mc:MovieClip;
       
-      public function dPadMap_mc_31()
+      public var tabText_tf:TextField;
+      
+      public function radialTab_39()
       {
          super();
          addFrameScript(0,this.frame1,1,this.frame2,2,this.frame3,3,this.frame4);

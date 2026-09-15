@@ -2,7 +2,7 @@ package
 {
    import Shared.AS3.Data.BSUIDataManager;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol500")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol504")]
    public class RadialMenuRingInner extends RadialMenuRing
    {
       

@@ -174,6 +174,8 @@ package
             _loc4_.icon = _loc3_.icon;
             _loc4_.data = _loc3_;
             _loc4_.level = _loc3_.itemLevel;
+            _loc4_.equipped = _loc3_.equipped;
+            _loc4_.available = _loc3_.available;
             _loc4_.currentHealth = _loc3_.currentHealth;
             _loc4_.maximumHealth = _loc3_.maximumHealth;
             _loc4_.ammoAvailable = _loc3_.ammoAvailable;

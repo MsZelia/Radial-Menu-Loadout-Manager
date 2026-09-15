@@ -2,7 +2,7 @@ package
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol499")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol503")]
    public class RadialMenuEntryInner extends RadialMenuEntry
    {
       
@@ -23,6 +23,7 @@ package
          m_IconClip.clipAlpha = 1;
          m_IconClip.parent.rotation = -this.rotation;
          Hotkey_mc.rotation = -this.rotation;
+         EquippedStateTop_mc.rotation = -this.rotation;
          m_IconClip.clipWidth = m_IconClip.width;
          m_IconClip.clipHeight = m_IconClip.height;
          m_IconClip.centerClip = true;

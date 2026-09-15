@@ -34,6 +34,10 @@ package
       
       public var HitArea_mc:MovieClip;
       
+      public var EquippedState_mc:MovieClip;
+      
+      public var EquippedStateTop_mc:MovieClip;
+      
       protected var m_IconClip:SWFLoaderClip;
       
       protected var m_IconInstance:MovieClip;
@@ -51,6 +55,8 @@ package
       private var m_Icon:String;
       
       private var m_isEmpty:Boolean = true;
+      
+      private var m_Available:Boolean = true;
       
       private var m_Level:uint;
       
@@ -184,6 +190,17 @@ package
          return this.m_Selected;
       }
       
+      public function set available(param1:Boolean) : *
+      {
+         this.m_Available = param1;
+         this.updateIconState();
+      }
+      
+      public function get available() : Boolean
+      {
+         return this.m_Available;
+      }
+      
       public function set exists(param1:Boolean) : *
       {
          this.m_Exists = param1;
@@ -226,12 +243,24 @@ package
          }
       }
       
+      public function set equipped(param1:Boolean) : *
+      {
+         if(this.EquippedState_mc != null)
+         {
+            this.EquippedState_mc.gotoAndStop(param1 ? "on" : "off");
+         }
+         if(this.EquippedStateTop_mc != null)
+         {
+            this.EquippedStateTop_mc.gotoAndStop(param1 ? "on_pets" : "off");
+         }
+      }
+      
       override public function redrawUIComponent() : void
       {
          var _loc1_:* = BSUIDataManager.GetDataFromClient("CharacterInfoData").data;
          if(!this.m_isEmpty)
          {
-            if(this.m_Level <= _loc1_.level && (this.m_AmmoName.length == 0 || this.m_AmmoAvailable > 0) && (this.m_MaximumHealth == 0 || this.m_CurrentHealth > 0))
+            if(this.m_Level <= _loc1_.level && this.m_Available && (this.m_AmmoName.length == 0 || this.m_AmmoAvailable > 0) && (this.m_MaximumHealth == 0 || this.m_CurrentHealth > 0))
             {
                this.m_IconInstance.alpha = 1;
             }

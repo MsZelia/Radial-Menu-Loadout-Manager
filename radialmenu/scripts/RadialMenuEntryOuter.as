@@ -1,6 +1,6 @@
 package
 {
-   [Embed(source="/_assets/assets.swf", symbol="symbol514")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol518")]
    public class RadialMenuEntryOuter extends RadialMenuEntry
    {
       
@@ -11,6 +11,7 @@ package
          m_IconClip = Icon_mc.Body;
          m_IconClip.parent.rotation = -this.rotation;
          Hotkey_mc.rotation = -this.rotation;
+         EquippedStateTop_mc.rotation = -this.rotation;
          m_IconClip.clipScale = 1;
          m_IconClip.clipAlpha = 1;
          m_IconClip.clipWidth = m_IconClip.width;

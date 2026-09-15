@@ -19,13 +19,12 @@ package
    import flash.events.Event;
    import flash.events.FocusEvent;
    import flash.events.KeyboardEvent;
-   import flash.events.TimerEvent;
    import flash.text.TextField;
    import flash.text.TextFieldAutoSize;
-   import flash.utils.Timer;
+   import flash.utils.getTimer;
    import scaleform.gfx.*;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol664")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol668")]
    public class RadialMenu extends IMenu
    {
       
@@ -33,15 +32,17 @@ package
       
       public static const EVENT_USE_QUICK_CAMP:String = "Radial::PlaceQuickCamp";
       
-      public static var DPAD_STATE_NONE:int = -1;
+      public static var MENU_ID_NONE:int = -1;
       
-      public static var DPAD_STATE_UP:int = 0;
+      public static var MENU_ID_FAVORITES:int = 0;
       
-      public static var DPAD_STATE_DOWN:int = 1;
+      public static var MENU_ID_EMOTES:int = 1;
       
-      public static var DPAD_STATE_LEFT:int = 2;
+      public static var MENU_ID_PET_EMOTES:int = 2;
       
-      public static var DPAD_STATE_RIGHT:int = 3;
+      public static var MENU_ID_WORLD_PET_DIRECT:int = 3;
+      
+      public static var MENU_ID_WORLD_PET_REMOTE:int = 4;
       
       private static var TEST_MODE:Boolean = false;
       
@@ -58,6 +59,12 @@ package
       private static const FILTER_FOODWATER:* = 1 << 5;
       
       private static const FILTER_AID:* = 1 << 6;
+      
+      private static const MOVE_DIR_UP:int = 1;
+      
+      private static const MOVE_DIR_DOWN:int = -1;
+      
+      private static const SCROLL_REPEAT_DELAY:Number = 150;
       
       public var ButtonHintBar_mc:BSButtonHintBar;
       
@@ -103,6 +110,12 @@ package
       
       protected var ButtonHintInspectItem:BSButtonHintData = new BSButtonHintData("$INSPECT","X","PSN_R3","Xenon_R3",1,null);
       
+      protected var ButtonHintCustomizePetItem:BSButtonHintData = new BSButtonHintData("$CUSTOMIZE","R","PSN_Y","Xenon_Y",1,null);
+      
+      protected var ButtonHintEditNameItem:BSButtonHintData = new BSButtonHintData("$EDIT_NAME","N","PSN_R3","Xenon_R3",1,null);
+      
+      protected var ButtonHintSwitchWheelItem:BSButtonHintData = new BSButtonHintData("$SHOW_COMMAND_WHEEL","E","PSN_X","Xenon_X",1,null);
+      
       public var SelectedImage_mc:SWFLoaderClip;
       
       public var SelectedImageInstance:MovieClip;
@@ -131,9 +144,9 @@ package
       
       private var m_QuickCampPlaceCost:uint = 0;
       
-      private var m_ThumbstickSpamTimer:Timer = new Timer(125,-1);
+      private var m_HasWorldPet:Boolean = false;
       
-      private var m_ThumbstickSpamDisable:Boolean = false;
+      private var m_NextScrollTime:Number = 0;
       
       private var m_LastCenterInfo:* = null;
       
@@ -181,6 +194,9 @@ package
          this.ButtonHintExpand.ButtonDisabled = true;
          this.ButtonHintSurvivalTent.ButtonEnabled = false;
          this.ButtonHintSurvivalTent.ButtonVisible = false;
+         this.ButtonHintCustomizePetItem.ButtonVisible = false;
+         this.ButtonHintEditNameItem.ButtonVisible = false;
+         this.ButtonHintSwitchWheelItem.ButtonVisible = false;
          addEventListener(PlatformChangeEvent.PLATFORM_CHANGE,this.onPlatformChange);
          RadialMenuLoadoutConfig.init(this);
          addEventListener(KeyboardEvent.KEY_UP,RadialMenuLoadoutConfig.onKeyUp,false,int.MAX_VALUE);
@@ -195,6 +211,9 @@ package
          _loc1_.push(this.ButtonHintSay);
          _loc1_.push(this.ButtonHintSlotItem);
          _loc1_.push(this.ButtonHintInspectItem);
+         _loc1_.push(this.ButtonHintCustomizePetItem);
+         _loc1_.push(this.ButtonHintEditNameItem);
+         _loc1_.push(this.ButtonHintSwitchWheelItem);
          _loc1_.push(this.ButtonHintExpand);
          this.ButtonHintBar_mc.SetButtonHintData(_loc1_);
       }
@@ -210,7 +229,7 @@ package
       private function updateButtonBar() : void
       {
          var _loc1_:Boolean = false;
-         this.ButtonHintSurvivalTent.ButtonVisible = this.selectedMenuIndex == DPAD_STATE_UP && !this.showInventory;
+         this.ButtonHintSurvivalTent.ButtonVisible = this.selectedMenuIndex == MENU_ID_FAVORITES && !this.showInventory;
          this.ButtonHintSurvivalTent.ButtonEnabled = true;
          if(this.m_QuickCampPlaceCost > 0)
          {
@@ -220,14 +239,20 @@ package
          {
             this.ButtonHintSurvivalTent.ButtonText = "$SURVIVALTENTZEUS";
          }
-         if(this.selectedMenuIndex == DPAD_STATE_DOWN)
+         this.ButtonHintSay.ButtonVisible = false;
+         this.ButtonHintCustomizePetItem.ButtonVisible = false;
+         this.ButtonHintEditNameItem.ButtonVisible = false;
+         this.ButtonHintSwitchWheelItem.ButtonVisible = false;
+         this.ButtonHintExpand.ButtonVisible = false;
+         this.ButtonHintSlotItem.ButtonVisible = false;
+         this.ButtonHintInspectItem.ButtonVisible = false;
+         if(this.selectedMenuIndex == MENU_ID_EMOTES)
          {
             _loc1_ = this.InnerRing.selectedEntry ? Boolean(this.InnerRing.selectedEntry.data.expandable) : false;
+            this.ButtonHintSay.ButtonVisible = true;
             this.ButtonHintSay.ButtonText = "$SAY";
             this.ButtonHintExpand.ButtonVisible = true;
             this.ButtonHintExpand.ButtonEnabled = _loc1_;
-            this.ButtonHintSlotItem.ButtonVisible = false;
-            this.ButtonHintInspectItem.ButtonVisible = false;
             if(this.OuterRing.selectedIndex > -1)
             {
                this.ButtonHintExpand.ButtonText = "$COLLAPSE";
@@ -236,11 +261,13 @@ package
             {
                this.ButtonHintExpand.ButtonText = "$EXPAND";
             }
+            this.ButtonHintSwitchWheelItem.ButtonVisible = this.m_HasWorldPet;
+            this.ButtonHintSwitchWheelItem.ButtonText = "$SHOW_PET_COMMAND_WHEEL";
          }
-         else if(this.selectedMenuIndex == DPAD_STATE_UP)
+         else if(this.selectedMenuIndex == MENU_ID_FAVORITES)
          {
+            this.ButtonHintSay.ButtonVisible = true;
             this.ButtonHintSay.ButtonText = "$RADIAL_MENU_USE";
-            this.ButtonHintExpand.ButtonVisible = false;
             this.ButtonHintSlotItem.ButtonVisible = !this.showInventory;
             this.ButtonHintInspectItem.ButtonVisible = !this.showInventory;
             if(Boolean(this.InnerRing.selectedEntry) && Boolean(this.InnerRing.selectedEntry.data.isRepairable))
@@ -252,6 +279,22 @@ package
                this.ButtonHintInspectItem.ButtonText = "$INSPECT";
             }
          }
+         else if(this.selectedMenuIndex == MENU_ID_WORLD_PET_REMOTE)
+         {
+            this.ButtonHintCustomizePetItem.ButtonVisible = true;
+            this.ButtonHintCustomizePetItem.ButtonText = "$CUSTOMIZE";
+            this.ButtonHintEditNameItem.ButtonVisible = true;
+            this.ButtonHintEditNameItem.ButtonText = "$EDIT_NAME";
+            this.ButtonHintSwitchWheelItem.ButtonVisible = true;
+            this.ButtonHintSwitchWheelItem.ButtonText = "$SHOW_EMOTE_WHEEL";
+         }
+         else if(this.selectedMenuIndex == MENU_ID_WORLD_PET_DIRECT)
+         {
+            this.ButtonHintCustomizePetItem.ButtonVisible = true;
+            this.ButtonHintCustomizePetItem.ButtonText = "$CUSTOMIZE";
+            this.ButtonHintEditNameItem.ButtonVisible = true;
+            this.ButtonHintEditNameItem.ButtonText = "$EDIT_NAME";
+         }
          this.ButtonHintMouseScrollNavigate.ButtonVisible = uiController == PlatformChangeEvent.PLATFORM_PC_KB_MOUSE && !this.showInventory;
       }
       
@@ -260,21 +303,27 @@ package
          var _loc2_:String = null;
          switch(param1)
          {
-            case DPAD_STATE_LEFT:
+            case MENU_ID_PET_EMOTES:
                _loc2_ = "left";
                this.radialTab.tabText_tf.text = "$EMOTES_PET";
                this.ButtonHintInspectItem.ButtonVisible = false;
                break;
-            case DPAD_STATE_RIGHT:
+            case MENU_ID_WORLD_PET_DIRECT:
                _loc2_ = "right";
+               this.radialTab.tabText_tf.text = "$WORLD_PET_COMMANDS";
+               this.ButtonHintInspectItem.ButtonVisible = false;
                break;
-            case DPAD_STATE_UP:
+            case MENU_ID_FAVORITES:
                _loc2_ = "up";
                this.radialTab.tabText_tf.text = "$FAVORITES";
                break;
-            case DPAD_STATE_DOWN:
+            case MENU_ID_EMOTES:
                _loc2_ = "down";
                this.radialTab.tabText_tf.text = "$EMOTES";
+               break;
+            case MENU_ID_WORLD_PET_REMOTE:
+               _loc2_ = "down";
+               this.radialTab.tabText_tf.text = "$WORLD_PET_COMMANDS";
          }
          this.updateFillWidth(this.radialTab.tabText_tf);
          this.DpadMap_mc.gotoAndStop(_loc2_);
@@ -290,7 +339,7 @@ package
       
       public function onMenuSelect(param1:int) : void
       {
-         if(param1 > DPAD_STATE_NONE)
+         if(param1 > MENU_ID_NONE)
          {
             if(this.showDpad)
             {
@@ -318,21 +367,17 @@ package
       private function populateCenterInfo(param1:Object) : void
       {
          this.m_LastCenterInfo = param1;
-         if(this.selectedMenuIndex != DPAD_STATE_LEFT && this.SelectedImageInstance != null)
+         if(this.SelectedImageInstance != null)
          {
             this.SelectedImage_mc.removeChild(this.SelectedImageInstance);
             this.SelectedImageInstance = null;
-         }
-         else if(this.selectedMenuIndex == DPAD_STATE_LEFT && this.SelectedImageInstance == null)
-         {
-            this.SelectedImageInstance = this.SelectedImage_mc.setContainerIconClip("SharedHeadshot1","","radialIconEmpty");
          }
          if(param1 != null)
          {
             this.CenterInfo_mc.gotoAndPlay("rollOn");
             switch(this.selectedMenuIndex)
             {
-               case DPAD_STATE_UP:
+               case MENU_ID_FAVORITES:
                   if(param1.count != null && param1.count > 1)
                   {
                      this.CenterInfo_mc.emoteTitleText_tf.text = param1.name + " (" + param1.count + ")";
@@ -342,10 +387,12 @@ package
                      this.CenterInfo_mc.emoteTitleText_tf.text = param1.name;
                   }
                   break;
-               case DPAD_STATE_DOWN:
+               case MENU_ID_EMOTES:
                   this.CenterInfo_mc.emoteTitleText_tf.text = param1.description;
                   break;
-               case DPAD_STATE_LEFT:
+               case MENU_ID_PET_EMOTES:
+               case MENU_ID_WORLD_PET_DIRECT:
+               case MENU_ID_WORLD_PET_REMOTE:
                   this.CenterInfo_mc.emoteTitleText_tf.text = param1.name;
             }
             if(param1.ammoName != null && param1.ammoName != "")
@@ -358,24 +405,14 @@ package
             }
             this.CenterInfo_mc.ConditionBar_mc.visible = param1.maximumHealth > 0 && this._ConditionMeterEnabled;
             GlobalFunc.updateConditionMeter(this.CenterInfo_mc.ConditionBar_mc.Bar_mc,param1.currentHealth,param1.maximumHealth,param1.durability);
-            if(this.selectedMenuIndex != DPAD_STATE_LEFT)
-            {
-               this.SelectedImageInstance = this.SelectedImage_mc.setContainerIconClip(param1.icon,"","radialIconEmpty");
-            }
+            this.SelectedImageInstance = this.SelectedImage_mc.setContainerIconClip(param1.icon,"","radialIconEmpty");
             this.CenterInfo_mc.IconContainer_mc.transform.colorTransform = null;
             this.CenterInfo_mc.emoteTitleText_tf.textColor = GlobalFunc.COLOR_TEXT_HEADER;
          }
          else
          {
-            if(this.selectedMenuIndex != DPAD_STATE_LEFT)
-            {
-               this.SelectedImageInstance = this.SelectedImage_mc.setContainerIconClip(null,"","radialIconEmpty");
-               this.CenterInfo_mc.gotoAndPlay("rollOff");
-            }
-            else if(currentFrameLabel != "rollOn")
-            {
-               this.CenterInfo_mc.gotoAndPlay("rollOn");
-            }
+            this.SelectedImageInstance = this.SelectedImage_mc.setContainerIconClip(null,"","radialIconEmpty");
+            this.CenterInfo_mc.gotoAndPlay("rollOff");
             this.CenterInfo_mc.ammoInfo_mc.ammoInfo_tf.text = "";
             this.CenterInfo_mc.emoteTitleText_tf.text = "";
             this.CenterInfo_mc.radialCategoryText_tf.text = "";
@@ -391,18 +428,15 @@ package
          var _loc4_:Boolean = false;
          this.m_CanPlaceQuickCamp = param1.canPlaceQuickCamp;
          this.m_QuickCampPlaceCost = param1.quickCampMoveCost;
+         this.m_HasWorldPet = param1.hasWorldPet;
          this.CenterInfo_mc.ConditionBar_mc.visible = false;
          if(param1.menuIndex != this.selectedMenuIndex)
          {
             this.InnerRing.expanded = false;
             this.onMenuSelect(param1.menuIndex);
             _loc4_ = true;
-            if(param1.menuIndex == DPAD_STATE_LEFT)
-            {
-               this.populateCenterInfo(null);
-            }
          }
-         if(param1.menuIndex > DPAD_STATE_NONE)
+         if(param1.menuIndex > MENU_ID_NONE)
          {
             _loc3_ = true;
          }
@@ -446,7 +480,7 @@ package
          _loc2_ = true;
          if(_loc2_)
          {
-            if(param1.menuIndex != DPAD_STATE_LEFT && !param1.innerExpanded && (this.InnerRing.selectedEntry == null || !this.InnerRing.selectedEntry.exists))
+            if(!param1.innerExpanded && (this.InnerRing.selectedEntry == null || !this.InnerRing.selectedEntry.exists))
             {
                _loc3_ = false;
             }
@@ -527,7 +561,7 @@ package
       
       private function updateShowHotkeys() : void
       {
-         var _loc1_:Boolean = uiController == PlatformChangeEvent.PLATFORM_PC_KB_MOUSE && this.selectedMenuIndex == DPAD_STATE_UP;
+         var _loc1_:Boolean = uiController == PlatformChangeEvent.PLATFORM_PC_KB_MOUSE && this.selectedMenuIndex == MENU_ID_FAVORITES;
          this.InnerRing.showKeyLabels = _loc1_;
          this.OuterRing.showKeyLabels = _loc1_;
          this.ButtonHintMouseScrollNavigate.ButtonVisible = uiController == PlatformChangeEvent.PLATFORM_PC_KB_MOUSE && !this.showInventory;
@@ -723,7 +757,7 @@ package
       private function onPlayerInventoryDataUpdate(param1:FromClientDataEvent) : void
       {
          this.updateSelfInventory();
-         if(this.selectedMenuIndex == DPAD_STATE_UP && this.InnerRing.selectedEntry != null && this.InnerRing.selectedEntry.exists)
+         if(this.selectedMenuIndex == MENU_ID_FAVORITES && this.InnerRing.selectedEntry != null && this.InnerRing.selectedEntry.exists)
          {
             this.m_LastCenterInfo = this.InnerRing.selectedEntry.data;
             this.populateCenterInfo(this.InnerRing.selectedEntry.data);
@@ -737,22 +771,22 @@ package
       
       public function ProcessUserEvent(param1:String, param2:Boolean) : Boolean
       {
-         var _loc3_:Boolean = false;
+         var _loc3_:* = false;
          RadialMenuLoadoutConfig.ProcessUserEvent(param1,param2);
-         if(this.selectedMenuIndex == DPAD_STATE_DOWN)
+         if(this.selectedMenuIndex == MENU_ID_EMOTES)
          {
-            if(param1 == "PlaceQuickCamp")
-            {
-               _loc3_ = true;
-            }
+            _loc3_ = param1 == "PlaceQuickCamp";
          }
-         else if(this.selectedMenuIndex == DPAD_STATE_UP)
+         else if(this.selectedMenuIndex == MENU_ID_FAVORITES)
          {
-            _loc3_ = this.showInventory;
             if(this.showInventory && param1 == "ForceClose")
             {
                _loc3_ = false;
                this.onSlotItemCancel();
+            }
+            else
+            {
+               _loc3_ = this.showInventory;
             }
             if(!param2)
             {
@@ -762,12 +796,12 @@ package
                   {
                      this.onShowInventory();
                   }
-                  if(param1 == "PlaceQuickCamp")
+                  else if(param1 == "PlaceQuickCamp")
                   {
                      this.onPlaceQuickCamp();
                   }
                }
-               else if(this.showInventory)
+               else
                {
                   switch(param1)
                   {
@@ -778,17 +812,20 @@ package
                         this.onSlotItemCancel();
                         break;
                      case "InventoryUp":
-                        if(uiPlatform != PlatformChangeEvent.PLATFORM_PC_KB_MOUSE)
-                        {
-                           this.m_SelectedList.ItemList_mc.List_mc.moveSelectionUp();
-                        }
-                        break;
                      case "InventoryDown":
-                        if(uiPlatform != PlatformChangeEvent.PLATFORM_PC_KB_MOUSE)
-                        {
-                           this.m_SelectedList.ItemList_mc.List_mc.moveSelectionDown();
-                        }
+                        this.m_NextScrollTime = 0;
                   }
+               }
+            }
+            else if(this.showInventory && uiPlatform != PlatformChangeEvent.PLATFORM_PC_KB_MOUSE)
+            {
+               switch(param1)
+               {
+                  case "InventoryUp":
+                     this.tryMoveSelection(MOVE_DIR_UP);
+                     break;
+                  case "InventoryDown":
+                     this.tryMoveSelection(MOVE_DIR_DOWN);
                }
             }
          }
@@ -796,10 +833,21 @@ package
          return _loc3_;
       }
       
-      private function thumbstickSpamTimeout(param1:TimerEvent) : void
+      private function tryMoveSelection(param1:int) : void
       {
-         this.m_ThumbstickSpamTimer.stop();
-         this.m_ThumbstickSpamDisable = false;
+         var _loc2_:Number = getTimer();
+         if(_loc2_ >= this.m_NextScrollTime)
+         {
+            if(param1 == MOVE_DIR_UP)
+            {
+               this.m_SelectedList.ItemList_mc.List_mc.moveSelectionUp();
+            }
+            else if(param1 == MOVE_DIR_DOWN)
+            {
+               this.m_SelectedList.ItemList_mc.List_mc.moveSelectionDown();
+            }
+            this.m_NextScrollTime = _loc2_ + SCROLL_REPEAT_DELAY;
+         }
       }
       
       public function ProcessThumbstick(param1:int) : Boolean
@@ -895,7 +943,7 @@ package
          {
             case 116:
                _loc3_ = this.testStateData.menuIndex + _loc2_;
-               _loc3_ = Math.max(DPAD_STATE_NONE,Math.min(_loc3_,DPAD_STATE_RIGHT));
+               _loc3_ = Math.max(MENU_ID_NONE,Math.min(_loc3_,MENU_ID_WORLD_PET_DIRECT));
                this.testStateData.menuIndex = _loc3_;
                this.processStateUpdate(this.testStateData);
                break;

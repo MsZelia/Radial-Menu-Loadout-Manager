@@ -3,7 +3,7 @@ package RadialMenu_fla
    import flash.display.MovieClip;
    import flash.text.TextField;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol633")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol637")]
    public dynamic class radialCenterGroup_mc_3 extends MovieClip
    {
       

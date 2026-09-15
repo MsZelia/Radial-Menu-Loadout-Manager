@@ -2,7 +2,7 @@ package RadialMenu_fla
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol629")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol633")]
    public dynamic class colorConditionMeter_6 extends MovieClip
    {
       
