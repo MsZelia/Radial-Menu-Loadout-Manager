@@ -29,7 +29,7 @@ package
       
       private static const MOD_NAME:String = "RadialMenuLoadoutManager";
       
-      private static const MOD_VERSION:String = "1.1.6";
+      private static const MOD_VERSION:String = "1.1.7";
       
       private static const FULL_MOD_NAME:String = "[" + MOD_NAME + " " + MOD_VERSION + "]";
       
@@ -330,6 +330,22 @@ package
          {
             var element:* = arr[i];
             if(element is String && lowercaseSearchString.indexOf(element.toLowerCase()) == 0)
+            {
+               return i;
+            }
+            i++;
+         }
+         return -1;
+      }
+      
+      private static function indexOfExactString(arr:Array, searchingFor:String, fromIndex:uint = 0) : int
+      {
+         var len:uint = arr.length;
+         var i:uint = fromIndex;
+         while(i < len)
+         {
+            var element:* = arr[i];
+            if(searchingFor === element)
             {
                return i;
             }
@@ -743,7 +759,7 @@ package
                   switch(matchMode)
                   {
                      case "EXACT":
-                        foundItemId = indexOfCaseSensitiveString(loadoutNames[j],itemName);
+                        foundItemId = indexOfExactString(loadoutNames[j],itemName);
                         if(foundItemId != -1)
                         {
                            matches[j][foundItemId].push({
