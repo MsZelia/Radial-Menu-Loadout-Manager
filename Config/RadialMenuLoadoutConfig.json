@@ -1,8 +1,8 @@
 {
 	"debug": false,
 	
-	"x": -500,
-	"y": -200,
+	"x": 500,
+	"y": 200,
 	"textSize": 20,
 	"textFont": "$MAIN_Font_Bold",
 	"textAlign": "left",
