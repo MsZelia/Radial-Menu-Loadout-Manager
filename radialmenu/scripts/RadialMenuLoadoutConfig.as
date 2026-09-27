@@ -122,8 +122,8 @@ package
          var tf:TextField = new TextField();
          tf.x = 0;
          tf.y = 0;
-         tf.width = 800;
-         tf.height = 800;
+         tf.width = 1000;
+         tf.height = 1000;
          tf.wordWrap = true;
          tf.multiline = true;
          var font:TextFormat = new TextFormat("$MAIN_Font",18,16777215);
@@ -256,6 +256,18 @@ package
          DEBUG_KEYS = data.debugKeys;
          DEBUG_SELECTION = data.debugSelection;
          DEBUG_EVENTS = data.debugUserEvents;
+         if(data.quickRepair == null)
+         {
+            data.quickRepair = {"enabled":false};
+         }
+         else
+         {
+            data.quickRepair.enabled = data.quickRepair.enabled != null ? Boolean(data.quickRepair.enabled) : true;
+            data.quickRepair.showButton = data.quickRepair.showButton != null ? Boolean(data.quickRepair.showButton) : true;
+            data.quickRepair.hotkey = Buttons.parseValue(data.quickRepair.hotkey);
+            data.quickRepair.name = data.quickRepair.name == null ? "{key}) Quick repair" : data.quickRepair.name;
+            data.quickRepair.conditionUnder = data.quickRepair.conditionUnder != null && !isNaN(data.quickRepair.conditionUnder) ? Number(data.quickRepair.conditionUnder) : 25;
+         }
          if(data.loadouts == null)
          {
             data.loadouts = [];
@@ -651,6 +663,11 @@ package
          var loadout:*;
          var radialList:*;
          var radialExpandedList:*;
+         var item:*;
+         var cnd:Number;
+         var playerInventory:*;
+         var foundItem:*;
+         var j:int;
          try
          {
             if(DEBUG_KEYS)
@@ -696,6 +713,51 @@ package
             if(config == null || PlayerInventoryData == null || PlayerInventoryData.InventoryList == null || PlayerInventoryData.InventoryList.length == 0)
             {
                return;
+            }
+            errorCode = "repair";
+            if(config.quickRepair && config.quickRepair.enabled && config.quickRepair.hotkey == event.keyCode)
+            {
+               i = 0;
+               radialList = BSUIDataManager.GetDataFromClient("RadialMenuListData").data;
+               playerInventory = BSUIDataManager.GetDataFromClient("PlayerInventoryData").data;
+               while(i < radialList.items.length)
+               {
+                  errorCode = "item " + i;
+                  item = radialList.items[i];
+                  if(Boolean(item) && item.isRepairable && item.durability != 0)
+                  {
+                     cnd = 100 * (item.currentHealth / item.maximumHealth);
+                     if(cnd <= config.quickRepair.conditionUnder)
+                     {
+                        foundItem = null;
+                        j = 0;
+                        while(j < playerInventory.InventoryList.length)
+                        {
+                           if(playerInventory.InventoryList[j].text == item.name)
+                           {
+                              foundItem = playerInventory.InventoryList[j];
+                              displayError("Found item: " + foundItem.text);
+                              break;
+                           }
+                           j++;
+                        }
+                        if(foundItem == null)
+                        {
+                           displayError("Quick repair - Not found in inventory: " + item.name + " (" + cnd.toFixed(0) + "%)");
+                        }
+                        else
+                        {
+                           displayError("Quick repair: " + item.name + " (" + cnd.toFixed(0) + "%)");
+                           BSUIDataManager.dispatchEvent(new CustomEvent("Container::InspectItem",{
+                              "serverHandleID":foundItem.serverHandleID,
+                              "fromContainer":false,
+                              "containerID":foundItem.containerID
+                           }));
+                        }
+                     }
+                  }
+                  i++;
+               }
             }
             errorCode = "loadouts";
             i = 0;
