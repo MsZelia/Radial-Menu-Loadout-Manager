@@ -45,6 +45,8 @@ package
       
       public static var DEBUG_KEYS:Boolean = false;
       
+      public static var DEBUG_MATCHES:Boolean = false;
+      
       private static var radialMenu:* = null;
       
       private static var PlayerInventoryData:* = null;
@@ -256,6 +258,7 @@ package
          DEBUG_KEYS = data.debugKeys;
          DEBUG_SELECTION = data.debugSelection;
          DEBUG_EVENTS = data.debugUserEvents;
+         DEBUG_MATCHES = data.debugMatches;
          if(data.quickRepair == null)
          {
             data.quickRepair = {"enabled":false};
@@ -557,6 +560,10 @@ package
       
       private static function slotLoadout(loadout:Object) : void
       {
+         var slotKey:String;
+         var indexItemNames:int;
+         var match:Object;
+         var st:String;
          errorCode = "key detected " + loadout.hotkey;
          var loadoutSlots:Object = {};
          errorCode = "find matches";
@@ -565,7 +572,7 @@ package
          var slotId:int = 0;
          while(slotId < 12)
          {
-            var slotKey:String = String(slotId + 1);
+            slotKey = String(slotId + 1);
             errorCode = "loadout " + slotId;
             if(loadout[slotKey] != null && loadout[slotKey].length > 0)
             {
@@ -573,15 +580,26 @@ package
                if(matches != null && matches[slotId].length > 0)
                {
                   errorCode = "indexItemNames " + slotId;
-                  var indexItemNames:int = 0;
+                  if(DEBUG_MATCHES)
+                  {
+                     displayError("matches for slot " + slotKey + ":");
+                  }
+                  indexItemNames = 0;
                   while(indexItemNames < matches[slotId].length)
                   {
                      errorCode = "match " + slotId;
+                     if(DEBUG_MATCHES)
+                     {
+                        displayError(matches[slotId][indexItemNames].map(function(x:Object):String
+                        {
+                           return x.text;
+                        }).join(", "));
+                     }
                      if(matches[slotId][indexItemNames].length > 0)
                      {
                         errorCode = "found match " + slotId + " " + indexItemNames;
-                        var match:Object = matches[slotId][indexItemNames][0];
-                        loadoutSlots[match.text] = {
+                        match = matches[slotId][indexItemNames][0];
+                        loadoutSlots[slotId] = {
                            "slotId":slotId,
                            "serverHandleID":match.serverHandleID,
                            "text":match.text
@@ -595,14 +613,14 @@ package
             slotId++;
          }
          errorCode = "slotting loadout";
-         var st:String = "Slotting loadout: " + loadout.name + "\n";
+         st = "Slotting loadout: " + loadout.name + "\n";
          for(slot in loadoutSlots)
          {
             errorCode = "slotting id";
             st += loadoutSlots[slot].slotId + 1 + " | " + (loadoutSlots[slot].text || "") + "\n";
             if(loadoutSlots[slot].serverHandleID != null && loadoutSlots[slot].text != InnerListItems[loadoutSlots[slot].slotId].name)
             {
-               errorCode = "slotting item " + slot;
+               errorCode = "slotting item on " + slot;
                slotItem(loadoutSlots[slot]);
             }
          }
