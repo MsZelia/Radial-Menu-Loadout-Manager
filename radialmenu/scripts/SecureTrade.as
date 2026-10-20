@@ -1349,7 +1349,7 @@ package
             {
                if(param1[_loc5_].text == "DESC")
                {
-                  GlobalFunc.SetText(this.ItemCardContainer_mc.Background_mc.Description_mc.Description_tf,param1[_loc5_].value);
+                  GlobalFunc.SetText(this.ItemCardContainer_mc.Background_mc.Description_mc.Description_tf,param1[_loc5_].value.replace(/\r\n/g,"\n"));
                   TextFieldEx.setVerticalAlign(this.ItemCardContainer_mc.Background_mc.Description_mc.Description_tf,TextFieldEx.VALIGN_BOTTOM);
                   _loc3_ = true;
                }
